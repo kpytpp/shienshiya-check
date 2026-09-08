@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心理機能タイプ簡易チェック</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+    background: linear-gradient(135deg, #f4f1ea 0%, #eef2f7 100%);
+    margin: 0; padding: 20px; color: #2c3e50;
+  }
+  .container {
+    max-width: 960px; margin: 0 auto; background: #fff;
+    border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 30px;
+  }
+  h1 { text-align: center; font-size: 1.35em; margin-bottom: 6px; color: #34495e; line-height: 1.5; }
+  .subtitle { text-align: center; color: #7f8c8d; font-size: 0.85em; margin-bottom: 22px; line-height: 1.8; }
+  .consent-note { font-size: 0.78em; color: #7f8c8d; background: #f7f9fc; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; line-height: 1.75; }
+
+  .start-card { border: 2px solid #e6e9ee; border-radius: 14px; padding: 26px; background: #fafbfd; text-align: center; }
+  .start-desc { font-size: 0.9em; color: #7f8c8d; line-height: 1.9; margin-bottom: 18px; }
+  .start-example { font-size: 0.82em; color: #95a5a6; margin: 14px auto 0; background: #fff; border-radius: 8px; padding: 12px 16px; line-height: 1.8; max-width: 560px; text-align: left; }
+
+  .progress-bar-wrap { background: #ecf0f1; border-radius: 10px; height: 10px; margin-bottom: 12px; overflow: hidden; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, #7d6ce0, #4aa3d8); width: 0%; transition: width 0.3s ease; }
+  .progress-text { text-align: right; font-size: 0.8em; color: #95a5a6; margin-bottom: 15px; }
+
+  .q-card { background: #fafbfd; border: 1px solid #e6e9ee; border-radius: 12px; padding: 24px; margin-bottom: 15px; }
+  .q-text { font-size: 1.05em; margin-bottom: 18px; line-height: 1.6; font-weight: bold; color: #34495e; }
+  .q-note { font-size: 0.78em; color: #95a5a6; font-weight: normal; margin-top: 6px; }
+
+  .choice-labels { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .choice-side { flex: 1; padding: 14px 16px; border-radius: 10px; font-size: 0.95em; line-height: 1.6; }
+  .choice-a { background: #eef4fa; border-left: 4px solid #3a6ea5; }
+  .choice-b { background: #f0f7f2; border-left: 4px solid #2e9e6d; }
+  .choice-tag { font-size: 0.75em; font-weight: bold; color: #7f8c8d; display: block; margin-bottom: 4px; }
+  .fc-scale { display: flex; gap: 8px; }
+  .fc-scale label { flex: 1; text-align: center; cursor: pointer; }
+  .fc-scale input[type="radio"] { display: none; }
+  .fc-btn { display: block; padding: 12px 4px; border-radius: 8px; background: #fff; border: 2px solid #dfe4ea; font-size: 0.78em; color: #576574; transition: all 0.15s ease; line-height: 1.4; }
+  .fc-scale input[type="radio"]:checked + .fc-btn { background: #4aa3d8; border-color: #4aa3d8; color: #fff; transform: scale(1.04); }
+
+  .scale { display: flex; justify-content: space-between; gap: 8px; }
+  .scale label { flex: 1; text-align: center; cursor: pointer; }
+  .scale input[type="radio"] { display: none; }
+  .scale-btn { display: block; padding: 10px 4px; border-radius: 8px; background: #fff; border: 2px solid #dfe4ea; font-size: 0.76em; color: #576574; transition: all 0.15s ease; }
+  .scale input[type="radio"]:checked + .scale-btn { background: #7d6ce0; border-color: #7d6ce0; color: #fff; transform: scale(1.05); }
+
+  .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; }
+  button { padding: 12px 24px; border: none; border-radius: 25px; font-size: 1em; cursor: pointer; font-weight: bold; transition: transform 0.15s, box-shadow 0.15s; }
+  button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: linear-gradient(90deg, #7d6ce0, #4aa3d8); color: #fff; }
+  .btn-secondary { background: #ecf0f1; color: #576574; }
+
+  #quizView, #resultView { display: none; }
+  .chart-wrap { display: flex; justify-content: center; margin: 20px 0; }
+  #radarCanvas { max-width: 100%; }
+  .result-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .result-table th, .result-table td { padding: 10px 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.92em; }
+  .result-table th { background: #f5f7fa; font-size: 0.85em; color: #576574; }
+  .bar-cell { width: 180px; }
+  .bar-bg { background: #ecf0f1; border-radius: 6px; height: 14px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; }
+  .attitude-box { margin-top: 25px; padding: 18px 20px; background: #f7f9fc; border-radius: 12px; border: 1px solid #e6e9ee; }
+  .attitude-title { font-weight: bold; margin-bottom: 10px; color: #34495e; }
+  .attitude-bar-wrap { display: flex; align-items: center; gap: 10px; }
+  .attitude-label { font-size: 0.85em; color: #576574; width: 70px; text-align: center; }
+  .attitude-bar-bg { flex: 1; height: 22px; border-radius: 11px; background: #ecf0f1; overflow: hidden; display: flex; }
+  .attitude-fill-i { background: linear-gradient(90deg, #8e6cd8, #b39ce8); height: 100%; }
+  .attitude-fill-e { background: linear-gradient(90deg, #4aa3d8, #6cc3e0); height: 100%; }
+  .attitude-pct { font-size: 0.8em; color: #fff; display: flex; align-items: center; justify-content: center; height: 100%; }
+  .type-result-box { margin-top: 20px; padding: 18px 22px; border-radius: 10px; background: #fff8ec; border-left: 4px solid #d8a24a; line-height: 1.8; }
+  .close-call { margin-top: 14px; padding: 12px 16px; background: #f4f8fb; border-left: 4px solid #4aa3d8; border-radius: 8px; font-size: 0.88em; line-height: 1.7; }
+  .var-box { margin-top: 22px; padding: 18px 20px; background: #fdf6f6; border-radius: 12px; border: 1px solid #f0dede; }
+  .var-title { font-weight: bold; margin-bottom: 10px; color: #34495e; }
+  .var-bar-bg { background: #ecf0f1; border-radius: 8px; height: 18px; overflow: hidden; margin: 8px 0 10px; }
+  .var-bar-fill { height: 100%; background: linear-gradient(90deg, #c9484f, #e08a8f); border-radius: 8px; }
+  .var-comment { font-size: 0.9em; line-height: 1.75; color: #576574; }
+  .compat-box { margin-top: 22px; }
+  .compat-title { font-weight: bold; color: #34495e; margin-bottom: 8px; }
+  .compat-table th, .compat-table td { vertical-align: top; font-size: 0.88em; }
+  .level-icon { font-weight: bold; font-size: 1.1em; }
+  .summary-box { background: #f0f2fb; border-left: 4px solid #7d6ce0; padding: 16px 20px; border-radius: 8px; margin-top: 18px; line-height: 1.8; font-size: 0.93em; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; color: #fff; font-size: 0.85em; font-weight: bold; margin: 2px 4px 2px 0; }
+
+  .glossary-box { margin-top: 26px; padding: 20px 22px; background: #f6f4fb; border: 1px solid #e6e0f2; border-radius: 12px; }
+  .glossary-title { font-weight: bold; color: #5b4a9e; margin-bottom: 12px; font-size: 1.02em; }
+  .glossary-box details { background: #fff; border: 1px solid #e6e9ee; border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; }
+  .glossary-box summary { cursor: pointer; font-weight: bold; color: #34495e; padding: 4px 0; }
+  .glossary-content { margin-top: 10px; font-size: 0.9em; line-height: 1.8; color: #444; }
+  .glossary-example { background: #f7f9fc; border-left: 3px solid #4aa3d8; padding: 8px 12px; border-radius: 6px; margin: 6px 0; }
+  .glossary-note { color: #8a7a3a; font-size: 0.88em; margin-top: 6px; }
+
+  .save-box { margin-top: 26px; padding: 20px 22px; background: #f5f9f5; border: 1px solid #dfeadf; border-radius: 12px; }
+  .save-title { font-weight: bold; color: #2e7d52; margin-bottom: 8px; }
+  .save-desc { font-size: 0.86em; color: #576574; line-height: 1.7; margin-bottom: 14px; }
+  .save-actions-main { display: flex; justify-content: center; margin-bottom: 14px; }
+  .btn-save-main {
+    padding: 18px 40px;
+    font-size: 1.15em;
+    border-radius: 30px;
+    box-shadow: 0 4px 14px rgba(74, 163, 216, 0.4);
+  }
+  .btn-save-sub { display: block; font-size: 0.62em; font-weight: normal; margin-top: 4px; opacity: 0.9; }
+  .save-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .btn-save { background: linear-gradient(90deg, #2e9e6d, #4aa3d8); color: #fff; }
+  .btn-copy { background: #ecf0f1; color: #576574; }
+  .copy-result { font-size: 0.8em; color: #2e7d52; margin-top: 10px; min-height: 1.2em; white-space: pre-wrap; text-align: center; }
+  .restore-notice { background: #fff8ec; border: 1px solid #f0e2c4; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 0.88em; line-height: 1.7; }
+  .file-load-box { background: #f4f8fb; border: 1px solid #dce8f2; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 0.88em; line-height: 1.9; }
+  .caveat { font-size: 0.75em; color: #b08a3a; background:#fff8ec; padding:10px 14px; border-radius:8px; margin-top:14px; line-height:1.7; }
+  .footer-note { font-size: 0.7em; color: #95a5a6; text-align: center; margin-top: 25px; line-height: 1.8; }
+  @media (max-width: 600px) {
+    .container { padding: 18px; }
+    .choice-labels { flex-direction: column; gap: 8px; }
+    .fc-scale { gap: 4px; }
+    .fc-btn { font-size: 0.68em; padding: 10px 2px; }
+    .scale-btn { font-size: 0.66em; padding: 8px 2px; }
+    .attitude-label { width: 50px; font-size: 0.75em; }
+    .btn-save-main { padding: 16px 26px; font-size: 1em; }
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 6px 10px; }
+    #modeView, #quizView, .save-box, .nav-buttons, .file-load-box, .restore-notice {
+      display: none !important;
+    }
+    .glossary-box details { border: 1px solid #ddd; break-inside: avoid; }
+    .glossary-box summary::-webkit-details-marker { display: none; }
+    .result-table, .compat-table, .q-card, .type-result-box, .var-box, .attitude-box, .summary-box {
+      break-inside: avoid;
+    }
+    .chart-wrap { break-inside: avoid; }
+    .footer-note { font-size: 8px; }
+    h1 { font-size: 1.2em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 id="pageTitle">心理機能タイプ簡易チェック（普段の自分版）</h1>
+  <p class="subtitle" id="pageSubtitle">
+    どちらも「間違いではない」2つの考え方から、自分に近い方を選んでいく形式です（全20問・5分程度）。<br>
+    ※C.G.ユングの心理機能論（思考・感情・感覚・直観、外向・内向）を参考にした独自の簡易チェックであり、臨床的な診断ではありません。
+  </p>
+
+  <!-- ===== 開始画面 ===== -->
+  <div id="modeView">
+    <div class="consent-note">
+      回答内容は、①ご自身の傾向を振り返っていただくため、②今後の育成方法の検討のために利用します。提出は任意です。個人を特定する形での提出については、提出フォーム側の同意事項をご確認ください。
+    </div>
+    <div class="restore-notice" id="restoreNotice" style="display:none;">
+      前回の結果がこの端末に保存されています。<button class="btn-secondary" style="padding:6px 14px;font-size:0.85em;margin-left:8px;" onclick="restoreSaved()">前回の結果を表示する</button>
+    </div>
+    <div class="file-load-box">
+      💾 保存した結果ファイル（.json）をお持ちの場合は、こちらから読み込んで結果画面を再表示できます。<br>
+      <input type="file" accept=".json,application/json" onchange="loadResultFromFile(event)">
+    </div>
+
+    <div class="start-card">
+      <div class="start-desc">
+        仕事から離れ、日常での考え方や過ごし方をイメージしながらお答えください。<br>
+        20問の二択・5段階の質問に答えると、思考・感情・感覚・直観のどれに寄りやすいか、外向・内向のどちらに近いか、対応スタイルの可変性が分かります。
+      </div>
+      <div class="start-example">
+        例：何かを決めるとき、重く見るのは<br>「筋が通っているか」／「自分や周りがどう感じるか」
+      </div>
+      <button class="btn-primary" style="margin-top:18px;" onclick="startQuiz()">チェックを始める →</button>
+    </div>
+  </div>
+
+  <!-- ===== 設問 ===== -->
+  <div id="quizView">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-text" id="progressText">Q1 / 20</div>
+    <div id="qContainer"></div>
+    <div class="nav-buttons">
+      <button class="btn-secondary" id="prevBtn" onclick="prevQ()">← 前へ</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextQ()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- ===== 結果 ===== -->
+  <div id="resultView">
+    <h2 style="text-align:center; margin-bottom:0;">結果</h2>
+    <p style="text-align:center;font-size:0.85em;color:#7f8c8d;margin-top:6px;" id="resultModeLabel"></p>
+
+    <div class="chart-wrap"><canvas id="radarCanvas" width="420" height="420"></canvas></div>
+
+    <table class="result-table">
+      <thead><tr><th>心理機能</th><th>スコア</th><th>割合</th><th class="bar-cell">グラフ</th></tr></thead>
+      <tbody id="resultTableBody"></tbody>
+    </table>
+    <div class="caveat">
+      この形式では「思考と感情」「感覚と直観」がそれぞれ対になっており、片方が高ければもう片方は低くなります（合計100%）。<b>どちらが優れているという意味ではなく、どちらに寄りやすいかを表しています。</b>
+    </div>
+
+    <div class="attitude-box">
+      <div class="attitude-title">エネルギーの方向</div>
+      <div class="attitude-bar-wrap">
+        <div class="attitude-label">内向 (I)</div>
+        <div class="attitude-bar-bg">
+          <div class="attitude-fill-i" id="introFill"><span class="attitude-pct" id="introPct"></span></div>
+          <div class="attitude-fill-e" id="extraFill"><span class="attitude-pct" id="extraPct"></span></div>
+        </div>
+        <div class="attitude-label">外向 (E)</div>
+      </div>
+    </div>
+
+    <div class="type-result-box" id="typeResultBox"></div>
+    <div class="close-call" id="closeCallBox" style="display:none;"></div>
+
+    <div class="var-box">
+      <div class="var-title">対応スタイルの可変性</div>
+      <div class="var-bar-bg"><div class="var-bar-fill" id="varFill"></div></div>
+      <div class="var-comment" id="varComment"></div>
+    </div>
+
+    <!-- ===== 用語解説（例付き） ===== -->
+    <div class="glossary-box">
+      <div class="glossary-title">📖 用語の解説（例付き）</div>
+
+      <details>
+        <summary>思考（Thinking）と感情（Feeling）</summary>
+        <div class="glossary-content">
+          <p><b>思考：</b>筋道・根拠・整合性を軸にして判断する考え方です。</p>
+          <div class="glossary-example">例：意見が対立したとき、まず「どちらの主張が理にかなっているか」を整理してから発言する。</div>
+          <p><b>感情：</b>人の気持ちや関係性、価値観を軸にして判断する考え方です（感情的になる、という意味ではありません）。</p>
+          <div class="glossary-example">例：意見が対立したとき、まず「この結論で周りがどう感じるか」を考えてから発言する。</div>
+          <p class="glossary-note">※どちらが優れているという意味ではなく、判断の「軸」の違いです。結論自体は同じになることもあります。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>感覚（Sensation）と直観（Intuition）</summary>
+        <div class="glossary-content">
+          <p><b>感覚：</b>今ここにある具体的な事実・経験を手がかりにする考え方です。</p>
+          <div class="glossary-example">例：初めての場所へ行くとき、道順や所要時間を事前に調べてから動く。</div>
+          <p><b>直観：</b>背景にある意味やパターン、将来の可能性を手がかりにする考え方です。</p>
+          <div class="glossary-example">例：初めての場所へ行くとき、だいたいの見当をつけてから動き、状況に応じて調整する。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>外向（Extraversion）と内向（Introversion）＝「方向」</summary>
+        <div class="glossary-content">
+          <p><b>外向：</b>人と関わったり、声に出して話したりすることでエネルギーが生まれる方向です。</p>
+          <div class="glossary-example">例：迷っていることがあるとき、誰かに話しながら考えると頭が整理される。</div>
+          <p><b>内向：</b>一人で考えたり、内側でじっくり処理したりすることでエネルギーが生まれる方向です。</p>
+          <div class="glossary-example">例：迷っていることがあるとき、まず一人になって考えを整理してから、必要な人にだけ話す。</div>
+          <p class="glossary-note">※「社交的かどうか」ではなく、「エネルギーがどちらの方向に自然と向かうか」を表します。内向的でも人と話すのが得意な人もいます。</p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>対応スタイルの可変性</summary>
+        <div class="glossary-content">
+          <p>場面や相手によって、対応の仕方や判断の軸をどれくらい変えるかを示す指標です。ユングの4機能（思考・感情・感覚・直観）とは別の観点として、独立して算出しています。</p>
+          <div class="glossary-example">
+            <b>高いスコアの例：</b>相手や状況に応じて、はっきり伝える言い方と、やわらかく伝える言い方を明確に切り替える。
+          </div>
+          <div class="glossary-example">
+            <b>低いスコアの例：</b>相手が誰であっても、自分なりの決め方・進め方が一貫している。
+          </div>
+          <p class="glossary-note">
+            高い＝良い、低い＝良い、という優劣を示す指標ではありません。<br>
+            ・高い場合：柔軟に対応できる強みがある一方、判断の軸が定まらず本人の負担が大きくなっている可能性もあります。<br>
+            ・低い場合：安定感があり周囲も対応を予測しやすい一方、想定外の場面では他者の視点を借りると幅が広がります。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="compat-box">
+      <div class="compat-title">支援者としての持ち味 × 養護者タイプ別 対応のヒント</div>
+      <div class="caveat" id="caregiverCaveat"></div>
+      <table class="result-table compat-table">
+        <thead><tr><th style="width:22%;">養護者タイプ（参考）</th><th style="width:8%;">相性</th><th>対応のポイント</th></tr></thead>
+        <tbody id="compatTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="summary-box" id="summaryBox"></div>
+
+    <div class="save-box">
+      <div class="save-title">結果の保存・提出</div>
+      <div class="save-desc" id="saveDesc"></div>
+
+      <div class="save-actions-main">
+        <button class="btn-save btn-save-main" id="formBtn" onclick="openForm()">提出フォームを開く<br><span class="btn-save-sub">（別タブ・結果は入力済み）</span></button>
+      </div>
+
+      <div class="save-actions">
+        <button class="btn-copy" onclick="printAsPDF()">解説を全部開いてPDF保存（印刷）</button>
+        <button class="btn-copy" onclick="downloadResultFile()">結果をファイルに保存（.json）</button>
+        <button class="btn-copy" onclick="copyResult()">結果をテキストでコピー</button>
+      </div>
+
+      <div class="copy-result" id="copyMsg"></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-secondary" onclick="backToMode()">← 最初の画面に戻る</button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    ※二択の設問は、どちらも日常でありうる考え方を並べています。正解・不正解はありません。<br>
+    ※「思考／感情」「感覚／直観」は対になっているため、個人の中でどちらに寄るかは分かりますが、人と人の間で「思考の量」を比べる用途には向きません。<br>
+    ※「対応スタイルの可変性」はユングの4機能とは別の観点（切り替えやすさ・判断軸の揺れ）のため、レーダーチャートには含めず独立して表示しています。<br>
+    ※養護者タイプの分類は、高齢者虐待対応の実践資料を参考に本アプリ用に簡略化した参考モデルです。<br>
+    ※本チェックは自己理解・相互理解を目的としたものであり、人事評価・担当の割り当て・適性の判定に用いるものではありません。
+  </div>
+</div>
+
+<script>
+// ===== kintone（フォームブリッジ）連携設定 =====
+const FORMBRIDGE = {
+  url: "https://9958817c.form.kintoneapp.com/public/f0f85c1406ee50b19ffad68d56d923a80ccb0a5b478a52deb270f755cdd113b6",
+  fields: {
+    datetime:     "日時",              // 完了日時
+    typeName:     "ドロップダウン_1",   // タイプ名（例：組織的リスク管理型）
+    mainFunction: "ドロップダウン_2",   // 主機能（思考/感情/感覚/直観）
+    direction:    "ドロップダウン_3",   // 方向（外向/内向）
+    thinking:     "数値",               // 思考(%)
+    feeling:      "数値_2",             // 感情(%)
+    sensation:    "数値_0",             // 感覚(%)
+    intuition:    "数値_1",             // 直観(%)
+    extraversion: "数値_4",             // 外向度(%)
+    variability:  "数値_3",             // 可変性(%)
+    closeCall:    "文字列__1行__0",     // 僅差の内容
+    raw:          "文字列__1行__1"      // 生回答（カンマ区切り）
+  }
+};
+const STORAGE_KEY = "shienshaTypeCheck_lastResult_v3";
+const MODE_LABEL = "普段の自分版";
+
+const TYPES = [
+  { key:"thinking",  name:"思考", short:"思考", color:"#3a6ea5", opposite:"feeling",
+    desc:"筋道や根拠を軸に判断する進め方。" },
+  { key:"feeling",   name:"感情", short:"感情", color:"#2e9e6d", opposite:"thinking",
+    desc:"人の気持ちや関係のあり方を軸に判断する進め方。" },
+  { key:"sensation", name:"感覚", short:"感覚", color:"#c9862f", opposite:"intuition",
+    desc:"目の前の具体的な事実を手がかりにする進め方。" },
+  { key:"intuition", name:"直観", short:"直観", color:"#8e5cc9", opposite:"sensation",
+    desc:"背景や見通しを思い描いて手がかりにする進め方。" }
+];
+
+const QUESTIONS = [
+  { pair:["thinking","feeling"], q:"何かを決めるとき、重く見るのは", a:"筋が通っているか", b:"自分や周りがどう感じるか" },
+  { pair:["thinking","feeling"], q:"人から相談されたとき、まずするのは", a:"状況を整理する", b:"気持ちを聞く" },
+  { pair:["thinking","feeling"], q:"意見が分かれたとき、気になるのは", a:"どちらが理にかなっているか", b:"その場の空気が悪くならないか" },
+  { pair:["thinking","feeling"], q:"買い物で迷ったとき", a:"条件を比べて選ぶ", b:"気に入ったかどうかで選ぶ" },
+  { pair:["thinking","feeling"], q:"人に指摘しなければいけない場面で", a:"はっきり言う方", b:"言い方を選ぶ方" },
+  { pair:["thinking","feeling"], q:"人を見るとき、目が行きやすいのは", a:"やってきたことの中身", b:"その人の人柄" },
+  { pair:["sensation","intuition"], q:"初めての場所へ行くとき", a:"道順や所要時間を調べておく", b:"だいたいの見当をつけて動く" },
+  { pair:["sensation","intuition"], q:"説明を聞くとき、分かりやすいのは", a:"具体例から入る話", b:"全体像から入る話" },
+  { pair:["sensation","intuition"], q:"物事を覚えているとき", a:"細かい部分まで覚えている", b:"全体の印象で覚えている" },
+  { pair:["sensation","intuition"], q:"何かを始めるとき", a:"手順を確かめてから動く", b:"やりながら考える" },
+  { pair:["sensation","intuition"], q:"人と話すとき、話題にしやすいのは", a:"実際にあった出来事", b:"思いついた考えやアイデア" },
+  { pair:["sensation","intuition"], q:"先のことを考えるとき", a:"今の延長で現実的に考える", b:"こうなるかも、と想像が広がる" },
+  { pair:["extraversion","introversion"], q:"休みの日に元気が出るのは", a:"人と会って過ごす", b:"一人の時間を過ごす" },
+  { pair:["extraversion","introversion"], q:"考えごとをするとき", a:"話しながら整理する", b:"頭の中で整理する" },
+  { pair:["extraversion","introversion"], q:"初対面の人が多い場で", a:"自分から声をかける", b:"声をかけられるのを待つ" },
+  { pair:["extraversion","introversion"], q:"予定について", a:"詰まっている方が調子が出る", b:"余白がある方が調子が出る" },
+  { likert:true, q:"相手や場面によって、自分の振る舞いはかなり変わる方だ" },
+  { likert:true, q:"一度決めたやり方を、途中で変えることがよくある" },
+  { likert:true, q:"相反する気持ちの間で迷うことが多い" },
+  { likert:true, q:"自分の性格を一言で説明するのは難しい" }
+];
+
+const JUNG8 = {
+  thinking_e: { name:"組織的リスク管理型", desc:"周囲に根拠を示しながら方針を提示し、人を動かしていく持ち味。説明や整理にも強い。" },
+  thinking_i: { name:"内省的分析型",       desc:"物事の背景を一人でじっくり分析し、筋道を練り上げる持ち味。" },
+  feeling_e:  { name:"関係調整型",         desc:"関係者の間に立ち、その場の空気を読みながら合意をつくっていく持ち味。" },
+  feeling_i:  { name:"共感的傾聴型",       desc:"一対一で相手の価値観や気持ちに深く寄り添い、信頼をじっくり築く持ち味。" },
+  sensation_e:{ name:"現場対応型",         desc:"実際の状況確認や急な対応など、具体的に動くことに強みを持つ持ち味。" },
+  sensation_i:{ name:"実務精査型",         desc:"物事の経過を丁寧に照合し、正確に実態をつかむ持ち味。" },
+  intuition_e:{ name:"展開先読み型",       desc:"周囲を巻き込みながら、先を見据えた新しい切り口を提案していく持ち味。" },
+  intuition_i:{ name:"背景洞察型",         desc:"表に出ていない関係性の力学や心理的背景を静かに読み取る持ち味。" }
+};
+
+const CAREGIVER_TYPES = [
+  { key:"power",    name:"権力と支配型",   desc:"高齢者の行動を支配するために、意図的か否かに関わらず、暴力や虐待行為を日常的に用いる養護者。要求が通ると優しくなるため、高齢者がその優しさを求めて言うことを聞いてしまう力関係に陥りやすい。" },
+  { key:"approval", name:"承認欲求型",     desc:"献身的な介護・世話を通じて自分自身の存在価値を確認しようとする養護者。社会的に孤立し視野が狭まる中で、過剰な介護や不適切な対応に至りやすい。" },
+  { key:"denial",   name:"現状否認型",     desc:"高齢者の状態や自分自身の対応に問題があることを認めず、支援の必要性や周囲からの指摘を否定・拒否する傾向が強い養護者。" },
+  { key:"mental",   name:"メンタル特性型", desc:"養護者自身に知的・発達・精神面などの特性があり、生活スキルの不足や共感性の乏しさ、こだわりの強さ、情緒的不安定さ等から虐待行為に至る養護者。" },
+  { key:"stress",   name:"ストレス衝動型", desc:"介護疲れや将来への悲観・不安、周囲の無理解、介護と仕事の両立の負担等が積み重なり、感情や行動のコントロールを失って衝動的に虐待的言動に至る養護者。" }
+];
+
+const COMPAT = {
+  thinking: {
+    power:    { level:"△", note:"根拠を示すことは抑止力になり得るが、力対力の構図になりやすい。冷静さを保ちつつ対等な対話姿勢を意識したい。" },
+    approval: { level:"○", note:"献身的な努力を制度的な枠組みの中に位置づけ、使える資源へ整理してつなげやすい。" },
+    denial:   { level:"△", note:"事実の提示や正論だけでは否認の壁を強めることがある。理解者としての関わりを他の視点で補いたい。" },
+    mental:   { level:"○", note:"特性を客観的に理解し、関わり方のルールや手順を明確にすることで進めやすい。" },
+    stress:   { level:"◎", note:"制度・サービス調整で負担軽減策を体系的に示せるため、ストレス要因の軽減に直結しやすい。" }
+  },
+  feeling: {
+    power:    { level:"△", note:"共感的な関わりが「理解者」と誤って受け取られ、境界が曖昧になることがある。共感と同時に線引きを意識したい。" },
+    approval: { level:"◎", note:"献身の背景にある「認められたい」思いを理解し、孤立からの回復を支える関わりができる。" },
+    denial:   { level:"○", note:"否認の背景にある不安や恐れに寄り添うことで、身構えた態度をやわらげやすい。" },
+    mental:   { level:"○", note:"情緒的な負担に寄り添えるが、一貫した対応の枠組みは他の視点と組み合わせたい。" },
+    stress:   { level:"◎", note:"介護疲れによる限界に早く気づき、労いを通じて負担感をやわらげやすい。" }
+  },
+  sensation: {
+    power:    { level:"○", note:"あざや金銭の動きなど具体的な事実を的確につかみ、安全確保の判断材料を集めやすい。" },
+    approval: { level:"○", note:"介護の実際の中身や、外部との接点の少なさなど孤立の実態を具体的につかみやすい。" },
+    denial:   { level:"○", note:"否認があっても、目に見える事実を積み重ねて示すことで手がかりを得やすい。" },
+    mental:   { level:"△", note:"生活スキルの状態は具体的に確認できるが、背景にある心理的要因の理解は他の視点との連携が要る。" },
+    stress:   { level:"○", note:"睡眠不足や身体的負荷など介護負担の中身を実務的につかみ、サービス調整につなげやすい。" }
+  },
+  intuition: {
+    power:    { level:"◎", note:"言動のパターンや力関係の構造を早めに見抜き、リスクの兆しを先取りしやすい。" },
+    approval: { level:"○", note:"献身の裏にある意味づけや、将来的な燃え尽き・孤立のリスクを見立てやすい。" },
+    denial:   { level:"◎", note:"否認の背景にある恐れや葛藤を読み取り、表面的な言動の裏の事情を見立てやすい。" },
+    mental:   { level:"○", note:"認知の偏りのパターンをつかみやすいが、具体的な生活状況の確認は他の視点と組み合わせたい。" },
+    stress:   { level:"○", note:"燃え尽きに至る前段階の兆し（余裕のなさ・孤立感）を早めに察しやすい。" }
+  }
+};
+
+let order = [];
+let current = 0;
+let answers = [];
+let lastResult = null;
+
+const FC_LABELS = ["左に近い", "どちらかといえば左", "どちらかといえば右", "右に近い"];
+const LIKERT_LABELS = ["全く\n当てはまらない", "あまり\n当てはまらない", "普通", "やや\n当てはまる", "とても\n当てはまる"];
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function startQuiz() {
+  answers = new Array(QUESTIONS.length).fill(null);
+  const fcIdx = QUESTIONS.map((q,i)=>i).filter(i => !QUESTIONS[i].likert);
+  const lkIdx = QUESTIONS.map((q,i)=>i).filter(i =>  QUESTIONS[i].likert);
+  shuffleArray(fcIdx);
+  order = fcIdx.concat(lkIdx);
+  current = 0;
+  document.getElementById("modeView").style.display = "none";
+  document.getElementById("resultView").style.display = "none";
+  document.getElementById("quizView").style.display = "block";
+  renderQuestion();
+}
+
+function backToMode() {
+  document.getElementById("quizView").style.display = "none";
+  document.getElementById("resultView").style.display = "none";
+  document.getElementById("modeView").style.display = "block";
+  showRestoreNoticeIfAny();
+}
+
+function renderQuestion() {
+  const qIdx = order[current];
+  const q = QUESTIONS[qIdx];
+  document.getElementById("progressText").textContent = `Q${current + 1} / ${QUESTIONS.length}`;
+
+  const container = document.getElementById("qContainer");
+  container.innerHTML = "";
+  const card = document.createElement("div");
+  card.className = "q-card";
+
+  const qText = document.createElement("div");
+  qText.className = "q-text";
+  qText.innerHTML = `Q${current + 1}. ${q.q}`
+    + (q.likert ? "" : `<div class="q-note">どちらも間違いではありません。近い方を選んでください。</div>`);
+  card.appendChild(qText);
+
+  if (q.likert) {
+    const scale = document.createElement("div");
+    scale.className = "scale";
+    for (let v = 1; v <= 5; v++) {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio"; input.name = "answer"; input.value = v;
+      if (answers[qIdx] === v) input.checked = true;
+      input.addEventListener("change", () => { answers[qIdx] = v; document.getElementById("nextBtn").disabled = false; });
+      const btn = document.createElement("span");
+      btn.className = "scale-btn";
+      btn.innerHTML = `${v}<br><small style="font-size:0.85em;">${LIKERT_LABELS[v-1]}</small>`;
+      label.appendChild(input); label.appendChild(btn); scale.appendChild(label);
+    }
+    card.appendChild(scale);
+  } else {
+    const labels = document.createElement("div");
+    labels.className = "choice-labels";
+    labels.innerHTML = `
+      <div class="choice-side choice-a"><span class="choice-tag">左</span>${q.a}</div>
+      <div class="choice-side choice-b"><span class="choice-tag">右</span>${q.b}</div>`;
+    card.appendChild(labels);
+
+    const scale = document.createElement("div");
+    scale.className = "fc-scale";
+    for (let v = 0; v <= 3; v++) {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio"; input.name = "answer"; input.value = v;
+      if (answers[qIdx] === v) input.checked = true;
+      input.addEventListener("change", () => { answers[qIdx] = v; document.getElementById("nextBtn").disabled = false; });
+      const btn = document.createElement("span");
+      btn.className = "fc-btn";
+      btn.textContent = FC_LABELS[v];
+      label.appendChild(input); label.appendChild(btn); scale.appendChild(label);
+    }
+    card.appendChild(scale);
+  }
+
+  container.appendChild(card);
+  document.getElementById("progressBar").style.width = `${(current / QUESTIONS.length) * 100}%`;
+  document.getElementById("prevBtn").disabled = current === 0;
+  document.getElementById("nextBtn").disabled = answers[qIdx] === null;
+  document.getElementById("nextBtn").textContent = (current === QUESTIONS.length - 1) ? "結果を見る →" : "次へ →";
+}
+
+function nextQ() {
+  const qIdx = order[current];
+  if (answers[qIdx] === null) return;
+  if (current < QUESTIONS.length - 1) { current++; renderQuestion(); }
+  else { showResult(); }
+}
+function prevQ() { if (current > 0) { current--; renderQuestion(); } }
+
+function computeScores() {
+  const raw = { thinking:0, feeling:0, sensation:0, intuition:0, extraversion:0, introversion:0 };
+  const maxes = { thinking:0, feeling:0, sensation:0, intuition:0, extraversion:0, introversion:0 };
+  let varSum = 0, varCount = 0;
+
+  QUESTIONS.forEach((q, i) => {
+    if (q.likert) { varSum += answers[i]; varCount++; return; }
+    const [ka, kb] = q.pair;
+    raw[ka] += (3 - answers[i]);
+    raw[kb] += answers[i];
+    maxes[ka] += 3; maxes[kb] += 3;
+  });
+
+  const rates = {};
+  TYPES.forEach(t => { rates[t.key] = Math.round((raw[t.key] / maxes[t.key]) * 1000) / 10; });
+  const extraversion = Math.round((raw.extraversion / maxes.extraversion) * 1000) / 10;
+  const introversion = Math.round((100 - extraversion) * 10) / 10;
+  const variability = Math.round(((varSum - varCount) / (varCount * 4)) * 1000) / 10;
+
+  return { raw, maxes, rates, extraversion, introversion, variability };
+}
+
+function variabilityComment(v) {
+  if (v >= 70) {
+    return "<b>高め</b>：場面や相手に応じて進め方を切り替える幅の広さがあります。多様な場面に対応できる強みである一方、"
+      + "<b>判断の軸が揺れて負担が大きくなっているサイン</b>のこともあります。迷いが続いていると感じるときは、"
+      + "自分の方針を言葉にして誰かと共有すると、抱え込みが軽くなります。";
+  }
+  if (v >= 40) return "<b>中程度</b>：場面に応じた切り替えと、一貫した判断の軸のバランスが取れている状態です。";
+  return "<b>低め</b>：一貫した判断の軸を持って進めるタイプです。ぶれない安定感がある一方、"
+    + "想定から外れる場面では、違う視点を持つ人の見方を一度聞いてみると幅が広がります。";
+}
+
+function showResult() {
+  document.getElementById("quizView").style.display = "none";
+  document.getElementById("modeView").style.display = "none";
+  document.getElementById("resultView").style.display = "block";
+  document.getElementById("resultModeLabel").textContent = MODE_LABEL + " の結果";
+
+  const s = computeScores();
+  renderResult(s.rates, s.raw, s.maxes, s.extraversion, s.introversion, s.variability, null);
+
+  const sortedFuncs = [...TYPES].sort((a, b) => s.rates[b.key] - s.rates[a.key]);
+  const topFunc = sortedFuncs[0], secondFunc = sortedFuncs[1];
+  const gap = Math.round((s.rates[topFunc.key] - s.rates[secondFunc.key]) * 10) / 10;
+  const directionKey = s.extraversion >= s.introversion ? "e" : "i";
+  const jung8 = JUNG8[`${topFunc.key}_${directionKey}`];
+
+  lastResult = {
+    version: MODE_LABEL,
+    date: new Date().toISOString().slice(0, 16).replace("T", " "),
+    rates: s.rates, raw: s.raw, maxes: s.maxes,
+    extraversion: s.extraversion, introversion: s.introversion, variability: s.variability,
+    mainFunction: topFunc.name,
+    direction: directionKey === "e" ? "外向 (E)" : "内向 (I)",
+    typeName: jung8.name,
+    closeCall: gap < 10 ? `${topFunc.name}と${secondFunc.name}が僅差（${gap}pt）` : "なし",
+    rawAnswers: answers.join(",")
+  };
+  saveToStorage(lastResult);
+  renderSaveBox();
+}
+
+function renderResult(rates, raw, maxes, extraversion, introversion, variability, savedLabel) {
+  const tbody = document.getElementById("resultTableBody");
+  tbody.innerHTML = "";
+  TYPES.forEach(t => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><span class="badge" style="background:${t.color}">${t.name}</span></td>
+      <td>${raw[t.key]} / ${maxes[t.key]}点</td>
+      <td><b>${rates[t.key]}%</b></td>
+      <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${rates[t.key]}%; background:${t.color};"></div></div></td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("introFill").style.width = introversion + "%";
+  document.getElementById("extraFill").style.width = extraversion + "%";
+  document.getElementById("introPct").textContent = introversion + "%";
+  document.getElementById("extraPct").textContent = extraversion + "%";
+
+  const sortedFuncs = [...TYPES].sort((a, b) => rates[b.key] - rates[a.key]);
+  const topFunc = sortedFuncs[0], secondFunc = sortedFuncs[1];
+  const gap = Math.round((rates[topFunc.key] - rates[secondFunc.key]) * 10) / 10;
+  const isCloseCall = gap < 10;
+  const growthFunc = TYPES.find(t => t.key === topFunc.opposite);
+  const directionKey = extraversion >= introversion ? "e" : "i";
+  const directionName = directionKey === "e" ? "外向 (E)" : "内向 (I)";
+  const jung8 = JUNG8[`${topFunc.key}_${directionKey}`];
+
+  document.getElementById("typeResultBox").innerHTML =
+    (savedLabel ? `<b>（${savedLabel}）</b><br>` : "")
+    + `<b>傾向：${jung8.name}</b><br>${jung8.desc}<br><br>`
+    + `寄りやすい機能：<span class="badge" style="background:${topFunc.color}">${topFunc.name}（${rates[topFunc.key]}%）</span>`
+    + `エネルギーの方向：<span class="badge" style="background:${directionKey === 'e' ? '#4aa3d8' : '#8e6cd8'}">${directionName}（${directionKey === 'e' ? extraversion : introversion}%）</span><br>`
+    + `意識すると幅が広がる視点：<span class="badge" style="background:${growthFunc.color}">${growthFunc.name}（${rates[growthFunc.key]}%）</span> － ${growthFunc.desc}`;
+
+  const closeBox = document.getElementById("closeCallBox");
+  if (isCloseCall) {
+    closeBox.style.display = "block";
+    closeBox.innerHTML = `<b>${topFunc.name}と${secondFunc.name}が近い値です（差 ${gap}ポイント）。</b><br>`
+      + `どちらか一方と決めつけず、両方の傾向をあわせ持つものとしてお読みください。以下は便宜上${topFunc.name}を軸に表示しています。`;
+  } else { closeBox.style.display = "none"; }
+
+  document.getElementById("varFill").style.width = variability + "%";
+  document.getElementById("varComment").innerHTML = `スコア：<b>${variability}%</b><br>` + variabilityComment(variability);
+
+  document.getElementById("caregiverCaveat").textContent =
+    "※以下の養護者タイプは、高齢者虐待対応の実践資料を参考に本アプリ用に簡略化した参考モデルです。担当の割り当てを示すものではなく、対応時に意識しておくとよい点を整理したものです。実際の判断は事例ごとのアセスメントに基づいて行ってください。";
+
+  const compatData = COMPAT[topFunc.key];
+  const compatBody = document.getElementById("compatTableBody");
+  compatBody.innerHTML = "";
+  CAREGIVER_TYPES.forEach(ct => {
+    const c = compatData[ct.key];
+    const levelColor = c.level === "◎" ? "#2e9e6d" : (c.level === "○" ? "#4aa3d8" : "#c9484f");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><b>${ct.name}</b><br><span style="font-size:0.85em;color:#95a5a6;">${ct.desc}</span></td>
+      <td><span class="level-icon" style="color:${levelColor};">${c.level}</span></td><td>${c.note}</td>`;
+    compatBody.appendChild(tr);
+  });
+
+  const withLevel = lv => CAREGIVER_TYPES.filter(ct => compatData[ct.key].level === lv);
+  const strongs = withLevel("◎"), cautions = withLevel("△");
+  let html = `<b>まとめ</b><br>寄りやすい機能は <span class="badge" style="background:${topFunc.color}">${topFunc.name}（${rates[topFunc.key]}%）</span> でした。`;
+  if (isCloseCall) html += `（${secondFunc.name}とは僅差です）`;
+  html += `<br>`;
+  html += strongs.length
+    ? `この傾向は、<b>${strongs.map(s => s.name).join("・")}</b>の養護者への対応で持ち味が活きやすい面があります。<br>`
+    : `どの養護者タイプにも一定の関わり方ができる傾向です。<br>`;
+  html += cautions.length
+    ? `一方、<b>${cautions.map(s => s.name).join("・")}</b>の養護者に対しては、線引きや別の視点からの補完を意識しておきたいところです。<br>`
+    : `特に注意が必要な組み合わせは出ていませんが、どの傾向であっても一人で抱え込まないことが前提です。<br>`;
+  html += `<br>自分と違う傾向を持つ同僚（例：${growthFunc.name}に寄りやすい人）と見立てを持ち寄ると、対応の幅を補い合えます。`;
+  html += `<br><br>※簡易的なセルフチェックであり、一つのタイプに断定するものではありません。担当ケースの割り当てを決めるためのものでもありません。`;
+  document.getElementById("summaryBox").innerHTML = html;
+
+  drawRadarChart(TYPES.map(t => rates[t.key]));
+}
+
+function storageAvailable() {
+  try { localStorage.setItem("__test__", "1"); localStorage.removeItem("__test__"); return true; }
+  catch (e) { return false; }
+}
+function saveToStorage(result) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(result)); } catch (e) {}
+}
+function loadFromStorage() {
+  try { const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+}
+
+// 画面表示用の "外向 (E)" / "内向 (I)" を、
+// kintone側の選択肢（括弧なし："外向" / "内向"）に変換する
+function toKintoneDirection(direction) {
+  if (direction.startsWith("外向")) return "外向";
+  if (direction.startsWith("内向")) return "内向";
+  return direction;
+}
+
+function buildFormUrl(r) {
+  const f = FORMBRIDGE.fields;
+  const p = new URLSearchParams();
+  p.set(f.datetime,     r.date);
+  p.set(f.typeName,     r.typeName);
+  p.set(f.mainFunction, r.mainFunction);
+  p.set(f.direction,    toKintoneDirection(r.direction));
+  p.set(f.thinking,     r.rates.thinking);
+  p.set(f.feeling,      r.rates.feeling);
+  p.set(f.sensation,    r.rates.sensation);
+  p.set(f.intuition,    r.rates.intuition);
+  p.set(f.extraversion, r.extraversion);
+  p.set(f.variability,  r.variability);
+  p.set(f.closeCall,    r.closeCall);
+  p.set(f.raw,          r.rawAnswers);
+  return FORMBRIDGE.url + (FORMBRIDGE.url.includes("?") ? "&" : "?") + p.toString();
+}
+
+function resultAsText(r) {
+  return [
+    `版：${r.version}`,
+    `日時：${r.date}`,
+    `傾向：${r.typeName}`,
+    `寄りやすい機能：${r.mainFunction} ／ 方向：${r.direction}`,
+    `思考 ${r.rates.thinking}% ／ 感情 ${r.rates.feeling}% ／ 感覚 ${r.rates.sensation}% ／ 直観 ${r.rates.intuition}%`,
+    `外向度 ${r.extraversion}% ／ 可変性 ${r.variability}%`,
+    `僅差：${r.closeCall}`,
+    `生回答：${r.rawAnswers}`
+  ].join("\n");
+}
+
+function renderSaveBox() {
+  const desc = document.getElementById("saveDesc");
+  const btn = document.getElementById("formBtn");
+  const storeNote = storageAvailable()
+    ? "結果はこの端末にも自動保存されるため、画面を閉じても次に開いたときに再表示できます。"
+    : "<b>※この開き方では結果の一時保存が使えません。</b>画面を閉じる前に、ファイル保存かテキストコピーを済ませてください。";
+  const baseDesc = "「解説を全部開いてPDF保存」を押すと、下の用語解説がすべて開いた状態で<b>印刷ダイアログ</b>が開きます。そこで「PDFに保存」を選ぶと、この結果画面全体（解説含む）をPDFファイルとして保存できます。<br>"
+      + "「結果をファイルに保存」を押すと <b>.jsonファイル</b> がダウンロードされます。"
+      + "そのファイルは最初の画面の「保存した結果ファイルを読み込む」から、いつでも同じ結果画面として再表示できます（他の端末でも可）。<br>" + storeNote;
+  if (FORMBRIDGE.url) {
+    desc.innerHTML = "まずは下の<b>「提出フォームを開く」</b>ボタンから、結果を提出してください（結果はあらかじめ入力された状態で<b>別タブ</b>に開きます。この画面は閉じずにそのまま残りますので、送信後もここに戻って確認・保存できます）。<br><br>"
+      + baseDesc;
+    btn.style.display = "";
+  } else {
+    desc.innerHTML = baseDesc
+      + "<br><b>提出フォームは未設定です。</b>フォーム作成後、HTMLファイル内の <code>FORMBRIDGE.url</code> にURLを設定すると、結果を自動入力した状態で別タブに開けるようになります。";
+    btn.style.display = "none";
+  }
+}
+
+function openForm() {
+  if (!lastResult || !FORMBRIDGE.url) return;
+  window.open(buildFormUrl(lastResult), "_blank", "noopener");
+}
+
+function copyResult() {
+  if (!lastResult) return;
+  const text = resultAsText(lastResult);
+  const msg = document.getElementById("copyMsg");
+  navigator.clipboard.writeText(text).then(
+    () => { msg.textContent = "コピーしました。フォームやメールに貼り付けてご利用ください。"; },
+    () => { msg.textContent = "コピーできませんでした。以下を選択してコピーしてください：\n" + text; }
+  );
+}
+
+// Claude Artifactとして開かれた場合、ページ側からの直接ダウンロード（<a download>等）は
+// ビューア側で無効化されるため、downloads capability経由で保存する。
+// 非対応環境（ローカルでダブルクリックして開いた場合等）ではnullのままフォールバックする。
+let __downloadsCap = null;
+(async function initDownloadsCapability() {
+  try {
+    if (window.claude && typeof window.claude.use === "function") {
+      __downloadsCap = await window.claude.use("downloads");
+    }
+  } catch (e) { __downloadsCap = null; }
+})();
+
+async function downloadResultFile() {
+  if (!lastResult) return;
+  const stamp = (lastResult.date || "").replace(/[^0-9]/g, "") || "result";
+  const filename = `心理機能タイプチェック結果_${stamp}.json`;
+  const data = JSON.stringify(lastResult, null, 2);
+  const msg = document.getElementById("copyMsg");
+
+  if (__downloadsCap) {
+    try {
+      await __downloadsCap.save({ filename, data });
+      msg.textContent = "結果ファイルを保存しました。別の端末やブラウザで見るときは、最初の画面の「ファイルから読み込む」からこのファイルを開いてください。";
+    } catch (err) {
+      if (err && err.code === "declined") {
+        msg.textContent = "保存をキャンセルしました。";
+      } else {
+        msg.textContent = "ファイル保存に失敗しました。代わりに「結果をテキストでコピー」をお使いください。";
+      }
+    }
+    return;
+  }
+
+  // フォールバック：downloads capabilityが使えない環境（ローカルファイルとして開いた場合等）
+  try {
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    msg.textContent = "結果ファイルを保存しました。別の端末やブラウザで見るときは、最初の画面の「ファイルから読み込む」からこのファイルを開いてください。";
+  } catch (e) {
+    msg.textContent = "この環境ではファイル保存に対応していません。代わりに「結果をテキストでコピー」をお使いください。";
+  }
+}
+
+function printAsPDF() {
+  const detailsEls = document.querySelectorAll('#resultView details');
+  const prevStates = [];
+  detailsEls.forEach(d => { prevStates.push(d.open); d.open = true; });
+
+  const originalTitle = document.title;
+  const stamp = (lastResult && lastResult.date ? lastResult.date.replace(/[^0-9]/g, "") : "result");
+  document.title = `心理機能タイプチェック結果_${stamp}`;
+
+  function restore() {
+    detailsEls.forEach((d, i) => { d.open = prevStates[i]; });
+    document.title = originalTitle;
+    window.removeEventListener("afterprint", restore);
+  }
+  window.addEventListener("afterprint", restore);
+
+  setTimeout(() => { window.print(); }, 60);
+}
+
+function loadResultFromFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const r = JSON.parse(e.target.result);
+      if (!r || !r.rates || !r.raw || !r.maxes) throw new Error("invalid file");
+      lastResult = r;
+      document.getElementById("modeView").style.display = "none";
+      document.getElementById("quizView").style.display = "none";
+      document.getElementById("resultView").style.display = "block";
+      document.getElementById("resultModeLabel").textContent = (r.version || MODE_LABEL) + " の結果（ファイルから読み込み）";
+      renderResult(r.rates, r.raw, r.maxes, r.extraversion, r.introversion, r.variability, "読み込んだ結果：" + (r.date || ""));
+      saveToStorage(r);
+      renderSaveBox();
+    } catch (err) {
+      alert("ファイルの読み込みに失敗しました。本チェックで保存した結果ファイル(.json)を選んでください。");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function restoreSaved() {
+  const r = loadFromStorage();
+  if (!r) return;
+  lastResult = r;
+  document.getElementById("modeView").style.display = "none";
+  document.getElementById("quizView").style.display = "none";
+  document.getElementById("resultView").style.display = "block";
+  document.getElementById("resultModeLabel").textContent = (r.version || MODE_LABEL) + " の結果";
+  renderResult(r.rates, r.raw, r.maxes, r.extraversion, r.introversion, r.variability, "前回の結果：" + r.date);
+  renderSaveBox();
+}
+
+function showRestoreNoticeIfAny() {
+  document.getElementById("restoreNotice").style.display = loadFromStorage() ? "block" : "none";
+}
+
+function drawRadarChart(values) {
+  const canvas = document.getElementById("radarCanvas");
+  const ctx = canvas.getContext("2d");
+  const size = canvas.width, cx = size / 2, cy = size / 2, radius = size * 0.38;
+  const n = TYPES.length, maxVal = 100;
+  ctx.clearRect(0, 0, size, size);
+
+  const steps = 5;
+  for (let s = steps; s >= 1; s--) {
+    const r = radius * (s / steps);
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+      const x = cx + r * Math.cos(angle), y = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = "#e0e4ea"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = "#b0b6be"; ctx.font = "11px sans-serif"; ctx.textAlign = "left";
+    ctx.fillText(`${Math.round(maxVal * s / steps)}%`, cx + 4, cy - r + 4);
+  }
+
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+    ctx.strokeStyle = "#e0e4ea"; ctx.stroke();
+    ctx.fillStyle = TYPES[i].color; ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(TYPES[i].short, cx + (radius + 30) * Math.cos(angle), cy + (radius + 30) * Math.sin(angle));
+  }
+
+  ctx.beginPath();
+  for (let i = 0; i <= n; i++) {
+    const idx = i % n;
+    const angle = (Math.PI * 2 * idx / n) - Math.PI / 2;
+    const r = radius * (values[idx] / maxVal);
+    const x = cx + r * Math.cos(angle), y = cy + r * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = "rgba(125, 108, 224, 0.22)";
+  ctx.strokeStyle = "#7d6ce0"; ctx.lineWidth = 2; ctx.fill(); ctx.stroke();
+
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+    const r = radius * (values[i] / maxVal);
+    ctx.beginPath();
+    ctx.arc(cx + r * Math.cos(angle), cy + r * Math.sin(angle), 4, 0, Math.PI * 2);
+    ctx.fillStyle = TYPES[i].color; ctx.fill();
+  }
+}
+
+document.getElementById("modeView").style.display = "block";
+showRestoreNoticeIfAny();
+</script>
+</body>
+</html>
