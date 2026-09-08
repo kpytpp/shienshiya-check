@@ -295,7 +295,7 @@
       </div>
 
       <div class="save-actions">
-        <button class="btn-copy" onclick="printAsPDF()">解説を全部開いてPDF保存（印刷）</button>
+        <button class="btn-copy" onclick="printAsPDF()">解説を全部開いてPDF保存</button>
         <button class="btn-copy" onclick="downloadResultFile()">結果をファイルに保存（.json）</button>
         <button class="btn-copy" onclick="copyResult()">結果をテキストでコピー</button>
       </div>
@@ -317,6 +317,8 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 // ===== kintone（フォームブリッジ）連携設定 =====
 const FORMBRIDGE = {
@@ -724,7 +726,7 @@ function renderSaveBox() {
   const storeNote = storageAvailable()
     ? "結果はこの端末にも自動保存されるため、画面を閉じても次に開いたときに再表示できます。"
     : "<b>※この開き方では結果の一時保存が使えません。</b>画面を閉じる前に、ファイル保存かテキストコピーを済ませてください。";
-  const baseDesc = "「解説を全部開いてPDF保存」を押すと、下の用語解説がすべて開いた状態で<b>印刷ダイアログ</b>が開きます。そこで「PDFに保存」を選ぶと、この結果画面全体（解説含む）をPDFファイルとして保存できます。<br>"
+  const baseDesc = "「解説を全部開いてPDF保存」を押すと、下の用語解説がすべて開いた状態でこの結果画面全体（解説含む）のPDFファイルがその場で作られます。パソコンでは自動的にダウンロードされ、iPhoneでは新しいタブでPDFが開くので、共有ボタンから「ファイルに保存」を選んでください。<br>"
       + "「結果をファイルに保存」を押すと <b>.jsonファイル</b> がダウンロードされます。"
       + "そのファイルは最初の画面の「保存した結果ファイルを読み込む」から、いつでも同じ結果画面として再表示できます（他の端末でも可）。<br>" + storeNote;
   if (FORMBRIDGE.url) {
@@ -803,23 +805,69 @@ async function downloadResultFile() {
   }
 }
 
-function printAsPDF() {
-  const detailsEls = document.querySelectorAll('#resultView details');
-  const prevStates = [];
-  detailsEls.forEach(d => { prevStates.push(d.open); d.open = true; });
+// iPhone（iOS Safari）はwindow.print()からの「PDFに保存」の導線が分かりにくく、
+// うまく保存できないという報告があったため、印刷ダイアログに頼らず
+// html2canvas + jsPDFで実際のPDFファイルをその場で生成してダウンロードさせる方式に変更。
+// jsPDFの.save()はiOS Safariを検知した場合、ダウンロードの代わりに新しいタブで
+// PDFを開く（そこから共有ボタン→「ファイルに保存」で保存できる）という扱いになる。
+async function printAsPDF() {
+  const resultView = document.getElementById('resultView');
+  const detailsEls = resultView.querySelectorAll('details');
+  const prevOpenStates = Array.from(detailsEls).map(d => d.open);
+  detailsEls.forEach(d => { d.open = true; });
 
-  const originalTitle = document.title;
-  const stamp = (lastResult && lastResult.date ? lastResult.date.replace(/[^0-9]/g, "") : "result");
-  document.title = `心理機能タイプチェック結果_${stamp}`;
+  // PDFに含めたくない操作系の要素（保存ボタン群・戻るボタン）を一時的に隠す
+  const hideEls = Array.from(resultView.querySelectorAll('.save-box, .nav-buttons'));
+  const prevDisplay = hideEls.map(el => el.style.display);
+  hideEls.forEach(el => { el.style.display = 'none'; });
+
+  const msg = document.getElementById('copyMsg');
+  const prevMsg = msg.textContent;
+  msg.textContent = 'PDFを作成しています…少しお待ちください';
 
   function restore() {
-    detailsEls.forEach((d, i) => { d.open = prevStates[i]; });
-    document.title = originalTitle;
-    window.removeEventListener("afterprint", restore);
+    detailsEls.forEach((d, i) => { d.open = prevOpenStates[i]; });
+    hideEls.forEach((el, i) => { el.style.display = prevDisplay[i]; });
   }
-  window.addEventListener("afterprint", restore);
 
-  setTimeout(() => { window.print(); }, 60);
+  try {
+    if (!window.html2canvas || !window.jspdf) throw new Error("PDFライブラリの読み込みに失敗しました");
+    // detailsを開いた直後はレイアウトが安定していないことがあるため、一呼吸おく
+    await new Promise(r => setTimeout(r, 100));
+
+    const canvas = await html2canvas(resultView, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+    const imgData = canvas.toDataURL('image/png');
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    const stamp = (lastResult && lastResult.date ? lastResult.date.replace(/[^0-9]/g, "") : "result");
+    pdf.save(`心理機能タイプチェック結果_${stamp}.pdf`);
+    msg.textContent = 'PDFを作成しました。iPhoneの場合、新しいタブでPDFが開いたら共有ボタンから「ファイルに保存」を選んでください。';
+  } catch (err) {
+    console.warn("PDF生成に失敗、印刷ダイアログにフォールバックします", err);
+    msg.textContent = 'PDFの自動作成に失敗したため、印刷ダイアログを開きます。';
+    restore();
+    setTimeout(() => { window.print(); }, 60);
+    return;
+  } finally {
+    restore();
+  }
 }
 
 function loadResultFromFile(event) {
