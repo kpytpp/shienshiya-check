@@ -114,6 +114,45 @@
   .file-load-box { background: #f4f8fb; border: 1px solid #dce8f2; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 0.88em; line-height: 1.9; }
   .caveat { font-size: 0.75em; color: #b08a3a; background:#fff8ec; padding:10px 14px; border-radius:8px; margin-top:14px; line-height:1.7; }
   .footer-note { font-size: 0.7em; color: #95a5a6; text-align: center; margin-top: 25px; line-height: 1.8; }
+
+  /* ===== 目次 ===== */
+  html { scroll-behavior: smooth; }
+  .toc-box { background: #f7f9fc; border: 1px solid #e6e9ee; border-radius: 12px; padding: 14px 16px; margin: 18px 0 6px; }
+  .toc-title { font-size: 0.82em; font-weight: bold; color: #576574; margin-bottom: 10px; }
+  .toc-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc-list a { font-size: 0.8em; color: #4a6fa5; text-decoration: none; background: #fff; border: 1px solid #dce8f2; border-radius: 16px; padding: 6px 12px; line-height: 1.4; }
+  .toc-list a:hover { background: #eef4fa; }
+
+  /* ===== 傾向（結果の主役） ===== */
+  .hero-box { margin: 20px 0 10px; padding: 26px 20px; border-radius: 14px; background: #f3f1fc; border: 2px solid #d9d3f2; text-align: center; }
+  .hero-label { font-size: 0.8em; color: #7d6ce0; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .hero-type { font-size: 1.75em; font-weight: bold; color: #4c3fa0; line-height: 1.35; margin-bottom: 12px; }
+  .hero-desc { font-size: 0.92em; color: #576574; line-height: 1.85; max-width: 520px; margin: 0 auto; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
+  .hero-badge { background: #fff; border: 1px solid #e0dcf5; border-radius: 20px; padding: 7px 14px; font-size: 0.8em; color: #576574; line-height: 1.5; }
+  .hero-badge b { color: #34495e; }
+  .hero-saved-label { font-size: 0.78em; color: #95a5a6; margin-bottom: 10px; }
+
+  /* ===== 全タイプの説明 ===== */
+  .alltypes-box { margin-top: 26px; padding: 20px 22px; background: #fbfaff; border: 1px solid #e6e0f2; border-radius: 12px; }
+  .alltypes-title { font-weight: bold; color: #5b4a9e; margin-bottom: 6px; font-size: 1.02em; }
+  .alltypes-note { font-size: 0.78em; color: #95a5a6; line-height: 1.7; margin-bottom: 12px; }
+  .alltypes-box details { background: #fff; border: 1px solid #e6e9ee; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; }
+  .alltypes-box summary { cursor: pointer; font-weight: bold; color: #34495e; padding: 4px 0; font-size: 0.92em; }
+  .alltypes-box details.mine { border: 2px solid #7d6ce0; background: #f7f5ff; }
+  .alltype-tag { display: inline-block; background: #7d6ce0; color: #fff; font-size: 0.72em; border-radius: 10px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
+  .alltype-desc { margin-top: 8px; font-size: 0.88em; line-height: 1.8; color: #576574; }
+
+  /* ===== 養護者タイプ別ヒント（カード形式・スマホ対応） ===== */
+  .cg-card { border: 1px solid #e6e9ee; border-radius: 12px; padding: 16px; margin-bottom: 12px; background: #fff; }
+  .cg-name { font-weight: bold; font-size: 0.98em; color: #34495e; margin-bottom: 8px; }
+  .cg-desc { font-size: 0.84em; color: #8a94a0; line-height: 1.75; margin-bottom: 14px; }
+  .cg-row { display: flex; gap: 12px; align-items: stretch; }
+  .cg-level { flex: 0 0 66px; text-align: center; background: #f7f9fc; border-radius: 8px; padding: 10px 4px; display: flex; flex-direction: column; justify-content: center; }
+  .cg-level-icon { font-size: 1.45em; font-weight: bold; line-height: 1.2; }
+  .cg-level-label { font-size: 0.68em; color: #95a5a6; margin-top: 2px; }
+  .cg-note { flex: 1; font-size: 0.87em; line-height: 1.75; color: #576574; }
+
   @media (max-width: 600px) {
     .container { padding: 18px; }
     .choice-labels { flex-direction: column; gap: 8px; }
@@ -122,14 +161,20 @@
     .scale-btn { font-size: 0.66em; padding: 8px 2px; }
     .attitude-label { width: 50px; font-size: 0.75em; }
     .btn-save-main { padding: 16px 26px; font-size: 1em; }
+    .hero-type { font-size: 1.45em; }
+    .hero-box { padding: 22px 16px; }
+    .cg-card { padding: 14px; }
+    .cg-level { flex: 0 0 56px; }
+    .alltypes-box { padding: 16px 14px; }
   }
 
   @media print {
     body { background: #fff; padding: 0; }
     .container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 6px 10px; }
-    #modeView, #quizView, .save-box, .nav-buttons, .file-load-box, .restore-notice {
+    #modeView, #quizView, .save-box, .nav-buttons, .file-load-box, .restore-notice, .toc-box {
       display: none !important;
     }
+    .cg-card, .hero-box, .alltypes-box details { break-inside: avoid; }
     .glossary-box details { border: 1px solid #ddd; break-inside: avoid; }
     .glossary-box summary::-webkit-details-marker { display: none; }
     .result-table, .compat-table, .q-card, .type-result-box, .var-box, .attitude-box, .summary-box {
@@ -190,7 +235,24 @@
     <h2 style="text-align:center; margin-bottom:0;">結果</h2>
     <p style="text-align:center;font-size:0.85em;color:#7f8c8d;margin-top:6px;" id="resultModeLabel"></p>
 
-    <div class="chart-wrap"><canvas id="radarCanvas" width="420" height="420"></canvas></div>
+    <div class="toc-box">
+      <div class="toc-title">この結果ページの内容</div>
+      <div class="toc-list">
+        <a href="#sec-type">あなたのタイプ</a>
+        <a href="#sec-chart">心理機能の割合</a>
+        <a href="#sec-direction">エネルギーの方向</a>
+        <a href="#sec-close" id="tocCloseLink" style="display:none;">近い値について</a>
+        <a href="#sec-var">対応スタイルの可変性</a>
+        <a href="#sec-alltypes">全タイプの説明</a>
+        <a href="#sec-glossary">用語の解説</a>
+        <a href="#sec-compat">養護者タイプ別のヒント</a>
+        <a href="#sec-summary">まとめ</a>
+      </div>
+    </div>
+
+    <div class="hero-box" id="sec-type"><div id="typeResultBox"></div></div>
+
+    <div class="chart-wrap" id="sec-chart"><canvas id="radarCanvas" width="420" height="420"></canvas></div>
 
     <table class="result-table">
       <thead><tr><th>心理機能</th><th>スコア</th><th>割合</th><th class="bar-cell">グラフ</th></tr></thead>
@@ -200,7 +262,7 @@
       この形式では「思考と感情」「感覚と直観」がそれぞれ対になっており、片方が高ければもう片方は低くなります（合計100%）。<b>どちらが優れているという意味ではなく、どちらに寄りやすいかを表しています。</b>
     </div>
 
-    <div class="attitude-box">
+    <div class="attitude-box" id="sec-direction">
       <div class="attitude-title">エネルギーの方向</div>
       <div class="attitude-bar-wrap">
         <div class="attitude-label">内向 (I)</div>
@@ -212,17 +274,24 @@
       </div>
     </div>
 
-    <div class="type-result-box" id="typeResultBox"></div>
+    <div id="sec-close"></div>
     <div class="close-call" id="closeCallBox" style="display:none;"></div>
 
-    <div class="var-box">
+    <div class="var-box" id="sec-var">
       <div class="var-title">対応スタイルの可変性</div>
       <div class="var-bar-bg"><div class="var-bar-fill" id="varFill"></div></div>
       <div class="var-comment" id="varComment"></div>
     </div>
 
+    <!-- ===== 全タイプの説明 ===== -->
+    <div class="alltypes-box" id="sec-alltypes">
+      <div class="alltypes-title">8つのタイプの説明</div>
+      <div class="alltypes-note">4つの心理機能（思考・感情・感覚・直観）× エネルギーの方向（外向・内向）の組み合わせです。あなたのタイプには色が付いています。タップすると説明が開きます。</div>
+      <div id="allTypesList"></div>
+    </div>
+
     <!-- ===== 用語解説（例付き） ===== -->
-    <div class="glossary-box">
+    <div class="glossary-box" id="sec-glossary">
       <div class="glossary-title">📖 用語の解説（例付き）</div>
 
       <details>
@@ -276,15 +345,13 @@
       </details>
     </div>
 
-    <div class="compat-box">
+    <div class="compat-box" id="sec-compat">
       <div class="compat-title">支援者としての持ち味 × 養護者タイプ別 対応のヒント</div>
       <div class="caveat" id="caregiverCaveat"></div>
-      <table class="result-table compat-table">
-        <thead><tr><th style="width:22%;">養護者タイプ（参考）</th><th style="width:8%;">相性</th><th>対応のポイント</th></tr></thead>
-        <tbody id="compatTableBody"></tbody>
-      </table>
+      <div id="compatList" style="margin-top:14px;"></div>
     </div>
 
+    <div id="sec-summary"></div>
     <div class="summary-box" id="summaryBox"></div>
 
     <div class="save-box">
@@ -622,18 +689,29 @@ function renderResult(rates, raw, maxes, extraversion, introversion, variability
   const jung8 = JUNG8[`${topFunc.key}_${directionKey}`];
 
   document.getElementById("typeResultBox").innerHTML =
-    (savedLabel ? `<b>（${savedLabel}）</b><br>` : "")
-    + `<b>傾向：${jung8.name}</b><br>${jung8.desc}<br><br>`
-    + `寄りやすい機能：<span class="badge" style="background:${topFunc.color}">${topFunc.name}（${rates[topFunc.key]}%）</span>`
-    + `エネルギーの方向：<span class="badge" style="background:${directionKey === 'e' ? '#4aa3d8' : '#8e6cd8'}">${directionName}（${directionKey === 'e' ? extraversion : introversion}%）</span><br>`
-    + `意識すると幅が広がる視点：<span class="badge" style="background:${growthFunc.color}">${growthFunc.name}（${rates[growthFunc.key]}%）</span> － ${growthFunc.desc}`;
+    (savedLabel ? `<div class="hero-saved-label">（${savedLabel}）</div>` : "")
+    + `<div class="hero-label">あなたのタイプは</div>`
+    + `<div class="hero-type">${jung8.name}</div>`
+    + `<div class="hero-desc">${jung8.desc}</div>`
+    + `<div class="hero-badges">`
+    +   `<span class="hero-badge">寄りやすい機能<br><b>${topFunc.name}（${rates[topFunc.key]}%）</b></span>`
+    +   `<span class="hero-badge">エネルギーの方向<br><b>${directionName}（${directionKey === 'e' ? extraversion : introversion}%）</b></span>`
+    +   `<span class="hero-badge">意識すると幅が広がる視点<br><b>${growthFunc.name}（${rates[growthFunc.key]}%）</b></span>`
+    + `</div>`;
 
   const closeBox = document.getElementById("closeCallBox");
+  const tocClose = document.getElementById("tocCloseLink");
   if (isCloseCall) {
     closeBox.style.display = "block";
+    if (tocClose) tocClose.style.display = "";
     closeBox.innerHTML = `<b>${topFunc.name}と${secondFunc.name}が近い値です（差 ${gap}ポイント）。</b><br>`
       + `どちらか一方と決めつけず、両方の傾向をあわせ持つものとしてお読みください。以下は便宜上${topFunc.name}を軸に表示しています。`;
-  } else { closeBox.style.display = "none"; }
+  } else {
+    closeBox.style.display = "none";
+    if (tocClose) tocClose.style.display = "none";
+  }
+
+  renderAllTypes(`${topFunc.key}_${directionKey}`);
 
   document.getElementById("varFill").style.width = variability + "%";
   document.getElementById("varComment").innerHTML = `スコア：<b>${variability}%</b><br>` + variabilityComment(variability);
@@ -642,15 +720,21 @@ function renderResult(rates, raw, maxes, extraversion, introversion, variability
     "※以下の養護者タイプは、高齢者虐待対応の実践資料を参考に本アプリ用に簡略化した参考モデルです。担当の割り当てを示すものではなく、対応時に意識しておくとよい点を整理したものです。実際の判断は事例ごとのアセスメントに基づいて行ってください。";
 
   const compatData = COMPAT[topFunc.key];
-  const compatBody = document.getElementById("compatTableBody");
-  compatBody.innerHTML = "";
+  const compatList = document.getElementById("compatList");
+  compatList.innerHTML = "";
   CAREGIVER_TYPES.forEach(ct => {
     const c = compatData[ct.key];
     const levelColor = c.level === "◎" ? "#2e9e6d" : (c.level === "○" ? "#4aa3d8" : "#c9484f");
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td><b>${ct.name}</b><br><span style="font-size:0.85em;color:#95a5a6;">${ct.desc}</span></td>
-      <td><span class="level-icon" style="color:${levelColor};">${c.level}</span></td><td>${c.note}</td>`;
-    compatBody.appendChild(tr);
+    const card = document.createElement("div");
+    card.className = "cg-card";
+    card.innerHTML =
+      `<div class="cg-name">${ct.name}</div>`
+      + `<div class="cg-desc">${ct.desc}</div>`
+      + `<div class="cg-row">`
+      +   `<div class="cg-level"><span class="cg-level-icon" style="color:${levelColor};">${c.level}</span><span class="cg-level-label">相性</span></div>`
+      +   `<div class="cg-note">${c.note}</div>`
+      + `</div>`;
+    compatList.appendChild(card);
   });
 
   const withLevel = lv => CAREGIVER_TYPES.filter(ct => compatData[ct.key].level === lv);
@@ -669,6 +753,29 @@ function renderResult(rates, raw, maxes, extraversion, introversion, variability
   document.getElementById("summaryBox").innerHTML = html;
 
   drawRadarChart(TYPES.map(t => rates[t.key]));
+}
+
+// 8タイプすべての説明を並べる。自分のタイプだけ色を付け、最初から開いた状態にする。
+function renderAllTypes(myKey) {
+  const box = document.getElementById("allTypesList");
+  if (!box) return;
+  box.innerHTML = "";
+  const labels = {
+    thinking_e: "思考 × 外向", thinking_i: "思考 × 内向",
+    feeling_e:  "感情 × 外向", feeling_i:  "感情 × 内向",
+    sensation_e:"感覚 × 外向", sensation_i:"感覚 × 内向",
+    intuition_e:"直観 × 外向", intuition_i:"直観 × 内向"
+  };
+  Object.keys(JUNG8).forEach(key => {
+    const t = JUNG8[key];
+    const isMine = (key === myKey);
+    const d = document.createElement("details");
+    if (isMine) { d.className = "mine"; d.open = true; }
+    d.innerHTML = `<summary>${t.name}<span style="font-weight:normal;color:#95a5a6;font-size:0.85em;">（${labels[key]}）</span>`
+      + (isMine ? `<span class="alltype-tag">あなた</span>` : "")
+      + `</summary><div class="alltype-desc">${t.desc}</div>`;
+    box.appendChild(d);
+  });
 }
 
 function storageAvailable() {
@@ -818,7 +925,7 @@ async function printAsPDF() {
   detailsEls.forEach(d => { d.open = true; });
 
   // PDFに含めたくない操作系の要素（保存ボタン群・戻るボタン）を一時的に隠す
-  const hideEls = Array.from(resultView.querySelectorAll('.save-box, .nav-buttons'));
+  const hideEls = Array.from(resultView.querySelectorAll('.save-box, .nav-buttons, .toc-box'));
   const prevDisplay = hideEls.map(el => el.style.display);
   hideEls.forEach(el => { el.style.display = 'none'; });
 
