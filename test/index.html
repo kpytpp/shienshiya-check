@@ -355,12 +355,14 @@
       <div class="save-title">結果の保存・提出</div>
       <div class="save-desc" id="saveDesc"></div>
 
+      <div style="font-weight:700;color:#1f7a4d;margin:10px 0 6px;">ステップ① まず、結果を提出してください</div>
       <div class="save-actions-main">
-        <button class="btn-save btn-save-main" id="formBtn" onclick="openForm()">提出フォームを開く<br><span class="btn-save-sub">（別タブ・結果は入力済み）</span></button>
+        <button class="btn-save btn-save-main" id="formBtn" onclick="openForm()">① 提出フォームを開く<br><span class="btn-save-sub">（別タブ・結果は入力済み）</span></button>
       </div>
 
+      <div style="font-weight:700;color:#556;margin:18px 0 6px;">ステップ② 提出が済んでから（お手元に残したい方のみ）</div>
       <div class="save-actions">
-        <button class="btn-copy" onclick="printAsPDF()">解説を全部開いてPDF保存</button>
+        <button class="btn-copy" onclick="printAsPDF()">② 解説を全部開いてPDF保存</button>
         <button class="btn-copy" onclick="copyResult()">結果をテキストでコピー</button>
       </div>
 
@@ -830,21 +832,20 @@ function renderSaveBox() {
   const storeNote = storageAvailable()
     ? "結果はこの端末にも自動保存されるため、画面を閉じても次に開いたときに再表示できます。"
     : "<b>※この開き方では結果の一時保存が使えません。</b>画面を閉じる前に、PDF保存かテキストコピーを済ませてください。";
-  const baseDesc = "「解説を全部開いてPDF保存」を押すと、下の用語解説がすべて開いた状態で、この結果画面全体（解説を含む）のPDFファイルがその場で作られます。パソコンでは自動的にダウンロードされ、iPhoneでは新しいタブでPDFが開くので、共有ボタンから「ファイルに保存」を選んでください。<br>"
+  const baseDesc = "<b>ステップ①</b>：下の「提出フォームを開く」を押して、結果を提出してください（結果はあらかじめ入力された状態で<b>別タブ</b>に開きます。送信したら、そのタブを閉じるか、ブラウザの「戻る」でこの画面に戻れます）。<br>"
+      + "<b>ステップ②</b>：提出が済んだら、お手元に残したい方は「PDF保存」を押してください。結果画面全体（解説を含む）のPDFが作られます。パソコンでは自動的にダウンロードされ、iPhoneでは新しいタブでPDFが開くので、共有ボタンから「ファイルに保存」を選んでください。<br>"
+      + "<b>PDFが開いたあと、この画面に戻るには</b>、ブラウザの「戻る」を押してください。<br>"
       + storeNote;
-  if (FORMBRIDGE.url) {
-    desc.innerHTML = "まずは下の<b>「提出フォームを開く」</b>ボタンから、結果を提出してください（結果はあらかじめ入力された状態で<b>別タブ</b>に開きます。この画面は閉じずにそのまま残りますので、送信後もここに戻って確認・保存できます）。<br><br>"
-      + baseDesc;
-    btn.style.display = "";
-  } else {
-    desc.innerHTML = baseDesc
-      + "<br><b>提出フォームは未設定です。</b>フォーム作成後、HTMLファイル内の <code>FORMBRIDGE.url</code> にURLを設定すると、結果を自動入力した状態で別タブに開けるようになります。";
-    btn.style.display = "none";
-  }
+  desc.innerHTML = baseDesc + (FORMBRIDGE.url ? "" : "<br><b>【テスト版】</b>提出フォームにはつながっていません。ボタンの見え方の確認用です。");
+  btn.style.display = "";
 }
 
 function openForm() {
-  if (!lastResult || !FORMBRIDGE.url) return;
+  if (!lastResult) return;
+  if (!FORMBRIDGE.url) {
+    document.getElementById("copyMsg").textContent = "【テスト版】ここを押すと、本番では提出フォームが別タブで開き、結果が入力された状態になります。テスト版では開きません。";
+    return;
+  }
   window.open(buildFormUrl(lastResult), "_blank", "noopener");
 }
 
