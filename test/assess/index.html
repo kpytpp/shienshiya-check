@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>養護者理解のためのアセスメント補助ツール（熟年相談室版）</title>
+<style>
+:root{--navy:#17324d;--blue:#2673b8;--pale:#edf5fb;--line:#d8e1e8;--text:#1f2933;--muted:#5d6b78;--warn:#fff7df;--white:#fff;--danger:#b42318}
+*{box-sizing:border-box}body{margin:0;background:#f4f7f9;color:var(--text);font-family:"Yu Gothic UI","Yu Gothic",Meiryo,sans-serif;line-height:1.65}
+header{background:linear-gradient(135deg,#17324d,#285f87);color:#fff;padding:28px 18px}header .inner,main{max-width:1040px;margin:auto}h1{font-size:clamp(1.35rem,3vw,2rem);margin:0 0 5px}.version{opacity:.85;font-size:.88rem}
+main{padding:20px 14px 70px}.notice,.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 16px rgba(23,50,77,.06)}.notice{padding:16px;margin-bottom:18px;border-left:6px solid #e6a700}.notice strong{color:#725400}
+.toolbar{position:sticky;top:0;z-index:10;background:rgba(244,247,249,.94);backdrop-filter:blur(8px);padding:10px 0;display:flex;gap:8px;flex-wrap:wrap}.progress{flex:1;min-width:190px;background:#dce5ec;border-radius:999px;height:12px;overflow:hidden;align-self:center}.progress span{display:block;height:100%;width:0;background:#2e8b78;transition:.2s}.progress-text{font-size:.85rem;color:var(--muted);min-width:105px;text-align:right}
+button{border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff}button.secondary{background:#e8eef3;color:#23394c}button.danger{background:#fff;color:var(--danger);border:1px solid #f0b7b2}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #e2b93b;outline-offset:2px}
+.section{margin:18px 0}.section h2{font-size:1.15rem;margin:0;padding:14px 18px;background:var(--navy);color:white;border-radius:14px 14px 0 0}.section-body{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:8px 16px}
+.question{padding:17px 2px;border-bottom:1px solid #e9eef2}.question:last-child{border-bottom:0}.qtitle{font-weight:700;margin-bottom:8px}.opt{display:block;margin:7px 0;padding:10px 12px;border:1px solid #dce4ea;border-radius:9px;cursor:pointer}.opt:hover{background:#f6fafc}.opt input{width:18px;height:18px;vertical-align:-3px;margin-right:8px}.subnote{font-size:.85rem;color:var(--muted);margin:6px 0}.reality{margin-top:8px;background:#fff8e5;border-color:#f1d58b}
+.result{display:none;margin-top:22px}.result.show{display:block}.result-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1fr);gap:18px}.chart-card,.score-card,.evidence{padding:18px}.chart-wrap{max-width:540px;margin:auto}canvas{display:block;width:100%;height:auto}.scores{display:grid;gap:10px}.score-row{display:grid;grid-template-columns:120px 1fr 72px;gap:10px;align-items:center}.bar{height:12px;background:#e4ebf0;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:#2e8b78}.score-value{text-align:right;font-variant-numeric:tabular-nums}.summary{background:var(--pale);padding:14px;border-radius:10px;margin-top:15px}.evidence{margin-top:18px}.evidence ul{padding-left:22px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.memo{width:100%;min-height:110px;border:1px solid #cdd8e0;border-radius:9px;padding:10px;font:inherit}.footnote{font-size:.85rem;color:var(--muted);margin-top:14px}
+@media(max-width:760px){.result-grid{grid-template-columns:1fr}.progress-text{display:none}.section-body{padding:7px 12px}.score-row{grid-template-columns:105px 1fr 66px}}
+@page{size:A4 portrait;margin:12mm}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}header,.toolbar,.input-area,.actions button.danger,.no-print{display:none!important}body,main{background:#fff;padding:0}.result{display:block!important}.card{box-shadow:none;break-inside:avoid}.result-grid{grid-template-columns:1fr 1fr}.evidence{font-size:10pt;break-before:page}textarea{border:0;min-height:70px}.chart-card,.score-card{break-inside:avoid}.notice{font-size:9pt}}
+</style>
+</head>
+<body>
+<header><div class="inner"><h1>養護者理解のためのアセスメント補助ツール</h1><div class="version">熟年相談室版（係内を含む）／ 試作版 Ver.0.3</div></div></header>
+<main>
+<div class="notice"><strong>必ずお読みください。</strong> 本ツールは養護者を診断・分類・ラベリングするものではありません。養護者の発言や状況から、虐待行為に至る背景を理解し、支援を検討するための補助ツールです。該当しない事項は選択せず、把握できていない事項は未回答のままで構いません。結果の大小だけで判断せず、複数の情報をもとに総合的に検討してください。</div>
+<div class="notice" style="border-left-color:#b42318"><strong>入力のお願い（熟年相談室限定）。</strong>この版は、熟年相談室（係内を含む）の職員向けです。ご本人・家族・事業所を特定できる情報（氏名、住所、生年月日、電話番号、事件番号など）は、メモ欄を含め、どこにも入力しないでください。「提出フォームを開く」を押すと、結果とメモが入力された状態で提出フォームが別のタブで開きます。内容を確かめてから、送信してください。</div>
+<div class="notice no-print" id="connBanner" style="display:none;border-left-color:#2673b8"><strong>【確認用】</strong>提出フォームにはまだつながっていません。画面の見え方と動きの確認用です。</div>
+<div class="toolbar no-print"><button id="calcBtn">結果を表示</button><button id="clearBtn" class="danger">入力を消去</button><div class="progress" aria-label="入力進捗"><span id="progressBar"></span></div><div class="progress-text" id="progressText">回答 0 / 15</div></div>
+<div class="input-area" id="form"></div>
+<section class="result" id="result" aria-live="polite">
+<h2>集計結果</h2>
+<div class="result-grid">
+<div class="card chart-card"><h3>5タイプの傾向</h3><div class="chart-wrap"><canvas id="radar" width="650" height="520" aria-label="5タイプのレーダーチャート"></canvas></div></div>
+<div class="card score-card"><h3>該当数と割合</h3><div class="scores" id="scores"></div><div class="summary" id="summary"></div><div class="footnote">割合の分母：権力と支配15、ストレス衝動15、メンタル特性13、現状否認16、承認欲求13</div></div>
+</div>
+<div class="card evidence"><h3>チェックした根拠項目</h3><ul id="evidenceList"></ul><h3>支援検討メモ</h3><textarea class="memo" id="memo" placeholder="結果だけでなく、養護者の言葉、生活歴、家族関係、高齢者の安全状況、支援の方向性等を記録してください。※氏名・住所・事件番号など、個人が特定できる情報は書かないでください。"></textarea>
+<div class="notice no-print" style="margin-top:16px;border-left-color:#2673b8">
+<strong>PDF保存方法：</strong>「PDFとして保存」を押し、表示された印刷画面で、プリンターに
+「Microsoft Print to PDF」または「PDFとして保存」を選び、保存してください。印刷画面が開かない場合は、キーボードの <strong>Ctrl＋P</strong> を押してください。
+</div>
+<div class="actions no-print"><button id="formBtn">① 提出フォームを開く（別タブ）</button><button id="printBtn" class="secondary">② PDFとして保存</button><button id="csvBtn" class="secondary">結果をCSV保存</button><button id="backBtn" class="secondary">入力へ戻る</button></div><div class="subnote no-print" id="formMsg" aria-live="polite"></div></div>
+</section>
+</main>
+<script>
+(()=>{
+const types=["権力と支配","ストレス衝動","メンタル特性","現状否認","承認欲求"], max=[15,15,13,16,13];
+const sections=[
+ {title:"Ⅰ　養護者は高齢者の状況をどう理解しているか",qs:[
+  {n:1,t:"養護者は、高齢者が日常生活を支障なく送ることができていると思っているか",o:[["思っている",[]],["思っていない",[]]],gap:true},
+  {n:2,t:"養護者は、高齢者の認知機能が病的に下がっていると思っているか",o:[["思っている",[]],["多少思っている",[]],["思っていない",[]]],gap:true},
+  {n:3,t:"養護者自身、高齢者に手を挙げたり大声で怒鳴ったりしていると思っているか",o:[["はい",[]],["いいえ",[]]],gap:true}
+ ]},
+ {title:"Ⅱ　養護者の状況はどうか",qs:[
+  {n:4,t:"仕事をしていない場合の理由（専業主婦を除く）",o:[["60歳以下であり、仕事ができないような身体の病気はない",[0,2]],["介護のために辞めた",[1,4]],["仕事が続かない",[2]]]},
+  {n:5,t:"負担軽減のためのサービス導入について",o:[["受け入れない",[3]],["受け入れる",[1,4]]]}
+ ]},
+ {title:"Ⅲ　養護者の心理状態はどうか",qs:[
+  {n:6,t:"どのくらいイライラしているか",o:[["年中",[0,2,3]],["それ以外",[1,4]]]},
+  {n:7,t:"元々イライラしやすい性格か",o:[["はい",[0,2]],["いいえ",[1,4]]]},
+  {n:8,t:"③で「はい」に該当する場合、それを養護者はどう思っているか",o:[["悪いと思う",[1,3]],["悪いと分かっているが、我慢できなくなったときにやってしまう",[1,4]],["悪いとは思うが仕方がない",[0]],["大した問題ではない",[0,2]]]},
+  {n:9,t:"そうしてしまうのはなぜだと養護者は主張しているか（複数選択可）",multi:true,o:[["できるはずなのに、甘えてやってもらおうとするから",[3]],["偉そうに指図したり、怒鳴ってきたりするから",[0,1]],["今まで散々、自分のことを叩いたり、怒鳴ったりしてきたから",[0]],["口で言っても分からない、しつけのため",[0,3]],["今まで大事にしてもらったわけでもないのに、なぜ今さらやらなければいけないのかと思う",[0,1]],["自分は限界まで頑張っているのに、本人に分かってもらえないから",[4]],["自分の頑張りを周りの人に分かってもらえないから",[4]],["自分が限界まで頑張っているのに、本人が変わらないから",[0,1,4]],["誰か助けてほしいと思う",[1]],["こんなにできないはずはないと思うから",[3]],["何とか元に戻ってほしいと思う一心で",[3]]]}
+ ]},
+ {title:"Ⅳ　養護者は高齢者の生活環境をどう理解しているか",qs:[
+  {n:10,t:"部屋が汚い、身綺麗でない場合にどう思うか",o:[["自分でできるはずなのに、やらないと思う",[3]],["別に気にならない",[2]]]}
+ ]},
+ {title:"Ⅴ　養護者は高齢者との関係・家族関係をどう理解しているか",qs:[
+  {n:11,t:"高齢者に対する気持ち",o:[["好き、尊敬、理想的、大切",[1,3,4]],["嫌い、怖い、憎い、恨み、軽蔑",[0,2]]]},
+  {n:12,t:"高齢者を含む家庭内で、暴言・暴力を見たり受けたりしたことがあるか",o:[["よく・時々",[0,2]],["ほとんどない・ない",[1,3,4]]]},
+  {n:13,t:"家族の中に、アルコール、ギャンブル、金銭面、異性関係の問題があるか",o:[["はい",[0,2]],["いいえ",[1,3,4]]]},
+  {n:14,t:"高齢者との今までの生活を幸せだったと思うか",o:[["はい",[1,3,4]],["いいえ・あまり",[0,2]]]},
+  {n:15,t:"この高齢者と夫婦（親子）でなければよかったと思うか",o:[["はい",[0]],["いいえ",[1,3,4]]]}
+ ]}
+];
+const form=document.getElementById('form');
+sections.forEach(s=>{const sec=document.createElement('section');sec.className='section';sec.innerHTML=`<h2>${s.title}</h2><div class="section-body"></div>`;const body=sec.lastElementChild;s.qs.forEach(q=>{const d=document.createElement('div');d.className='question';d.dataset.q=q.n;d.innerHTML=`<div class="qtitle">${q.n}. ${q.t}</div>`+(q.multi?'<div class="subnote">該当するものを複数選択できます。</div>':'');q.o.forEach((o,i)=>{const id=`q${q.n}_${i}`, input=q.multi?'checkbox':'radio';const l=document.createElement('label');l.className='opt';l.innerHTML=`<input type="${input}" id="${id}" name="q${q.n}" data-types="${o[1].join(',')}" value="${o[0]}">${o[0]}`;d.appendChild(l)});if(q.gap){const l=document.createElement('label');l.className='opt reality';l.innerHTML=`<input type="checkbox" name="gap${q.n}" data-types="2,3" value="支援者が把握する事実と養護者の理解が異なる">支援者が把握する事実と養護者の理解が異なる`;d.appendChild(l);const p=document.createElement('div');p.className='subnote';p.textContent='※このチェック時のみ「メンタル特性」「現状否認」に加算します。';d.appendChild(p)}body.appendChild(d)});form.appendChild(sec)});
+function selected(){return [...form.querySelectorAll('input:checked')]}
+function updateProgress(){const answered=new Set(selected().map(x=>x.name.replace('gap','q')));let count=0;for(let i=1;i<=15;i++)if(answered.has('q'+i))count++;document.getElementById('progressBar').style.width=(count/15*100)+'%';document.getElementById('progressText').textContent=`回答 ${count} / 15`}
+form.addEventListener('change',updateProgress);
+function calculate(){const counts=[0,0,0,0,0], evidence=[];selected().forEach(x=>{(x.dataset.types||'').split(',').filter(Boolean).forEach(t=>counts[+t]++);const q=x.closest('.question');evidence.push(`${q.dataset.q}. ${x.value}`)});const pct=counts.map((v,i)=>Math.min(100,v/max[i]*100));renderScores(counts,pct);drawRadar(pct);const ul=document.getElementById('evidenceList');ul.innerHTML=evidence.length?evidence.map(e=>`<li>${escapeHtml(e)}</li>`).join(''):'<li>チェックされた項目はありません。</li>';const high=Math.max(...pct);let text='チェック数が少なく、現時点では傾向が明確ではありません。補助シートの個別項目と未把握情報を確認してください。';if(high>0){const tops=types.filter((_,i)=>Math.abs(pct[i]-high)<0.01);text=`相対的に割合が高い傾向：${tops.join('、')}（${high.toFixed(0)}%）。これはタイプの確定ではありません。複数の傾向、養護者の言葉、客観的事実、高齢者の安全状況を併せて検討してください。`}document.getElementById('summary').textContent=text;document.getElementById('result').classList.add('show');document.getElementById('result').scrollIntoView({behavior:'smooth'});return {counts,pct,evidence}}
+function renderScores(c,p){document.getElementById('scores').innerHTML=types.map((t,i)=>`<div class="score-row"><strong>${t}</strong><div class="bar"><span style="width:${p[i].toFixed(1)}%"></span></div><div class="score-value">${c[i]}/${max[i]}<br>${p[i].toFixed(0)}%</div></div>`).join('')}
+function drawRadar(p){const c=document.getElementById('radar'),ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2+5,R=185,N=5;ctx.clearRect(0,0,c.width,c.height);ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';for(let level=1;level<=5;level++){ctx.beginPath();for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N,r=R*level/5,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.strokeStyle='#ccd7df';ctx.stroke()}for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);ctx.strokeStyle='#d8e1e8';ctx.stroke();const lr=R+50;ctx.fillStyle='#263746';ctx.fillText(types[i],cx+Math.cos(a)*lr,cy+Math.sin(a)*lr)}ctx.beginPath();p.forEach((v,i)=>{const a=-Math.PI/2+i*2*Math.PI/N,r=R*v/100,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.fillStyle='rgba(38,115,184,.25)';ctx.fill();ctx.strokeStyle='#2673b8';ctx.lineWidth=3;ctx.stroke();p.forEach((v,i)=>{const a=-Math.PI/2+i*2*Math.PI/N,r=R*v/100,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fillStyle='#17649f';ctx.fill()})}
+function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+document.getElementById('calcBtn').addEventListener('click',calculate);document.getElementById('printBtn').addEventListener('click',()=>{calculate();document.title='養護者アセスメント結果_'+new Date().toISOString().slice(0,10);window.print();});window.addEventListener('afterprint',()=>{document.title='養護者理解のためのアセスメント補助ツール（熟年相談室版）';});document.getElementById('backBtn').addEventListener('click',()=>form.scrollIntoView({behavior:'smooth'}));document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('入力内容とメモをすべて消去しますか？')){form.querySelectorAll('input').forEach(x=>x.checked=false);document.getElementById('memo').value='';document.getElementById('result').classList.remove('show');updateProgress();window.scrollTo({top:0,behavior:'smooth'})}});
+document.getElementById('csvBtn').addEventListener('click',()=>{const r=calculate(),rows=[['養護者アセスメント補助ツール 試作版'],['出力日時',new Date().toLocaleString('ja-JP')],[],['タイプ','該当数','分母','割合']];types.forEach((t,i)=>rows.push([t,r.counts[i],max[i],r.pct[i].toFixed(1)+'%']));rows.push([],['チェックした根拠項目']);r.evidence.forEach(e=>rows.push([e]));rows.push([],['支援検討メモ',document.getElementById('memo').value]);rows.push([],['注意','本結果は診断・タイプ確定を目的とせず、支援検討の参考傾向を示すものです。']);const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='養護者アセスメント結果_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)});
+
+// ===== 提出フォーム（フォームブリッジ→kintone）連携：熟年相談室版 =====
+// url にフォームブリッジの公開URLを入れると有効になる。空のままなら「確認用」表示になり、送信はされない。
+// fields の値は、kintoneアプリの「フィールドコード」と一致させる。フォームに無い項目は空文字にするか、
+// フォーム側に作らなければ受け取られない（一致した項目だけが反映される）。
+const FORMBRIDGE={
+  url:"",
+  fields:{
+    datetime:"ass_datetime",      // 入力日時
+    version:"ass_version",        // 設問・ツールの版（設問を直した時に前後を分けるため）
+    answered:"ass_answered",      // 回答した設問数（0〜15）
+    raw:"ass_raw",                // 生回答（設問ごとの選択肢番号。形式は項目対応表を参照）
+    gap:"ass_gap",                // 「事実と養護者の理解が異なる」にチェックした設問番号（例 1,3）
+    top:"ass_top",                // 相対的に割合が高いタイプ（例 権力と支配、承認欲求）
+    cnt_power:"ass_cnt_power", cnt_stress:"ass_cnt_stress", cnt_mental:"ass_cnt_mental", cnt_denial:"ass_cnt_denial", cnt_approval:"ass_cnt_approval",
+    pct_power:"ass_pct_power", pct_stress:"ass_pct_stress", pct_mental:"ass_pct_mental", pct_denial:"ass_pct_denial", pct_approval:"ass_pct_approval",
+    memo:"ass_memo"               // 支援検討メモ（先頭300字まで）
+  }
+};
+const TOOL_VERSION="熟相版 v0.3";
+const MEMO_MAX=300;
+const TKEYS=["power","stress","mental","denial","approval"];
+function nowStr(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function buildSubmit(){
+  const counts=[0,0,0,0,0];
+  selected().forEach(x=>{(x.dataset.types||'').split(',').filter(Boolean).forEach(t=>counts[+t]++)});
+  const pct=counts.map((v,i)=>Math.min(100,v/max[i]*100));
+  const segs=[];let answered=0;
+  for(let n=1;n<=15;n++){
+    const idx=[...form.querySelectorAll(`input[name="q${n}"]:checked`)].map(x=>x.id.split('_')[1]);
+    if(idx.length)answered++;
+    segs.push(idx.join('+'));
+  }
+  const gaps=[];
+  for(let n=1;n<=3;n++){if(form.querySelector(`input[name="gap${n}"]:checked`))gaps.push(n)}
+  const high=Math.max(...pct);
+  const top=high>0?types.filter((_,i)=>Math.abs(pct[i]-high)<0.01).join('、'):'';
+  let memo=(document.getElementById('memo').value||'').trim();
+  const cut=memo.length>MEMO_MAX;
+  if(cut)memo=memo.slice(0,MEMO_MAX);
+  const v={datetime:nowStr(),version:TOOL_VERSION,answered:answered,raw:segs.join(','),gap:gaps.join(','),top:top,memo:memo};
+  TKEYS.forEach((k,i)=>{v['cnt_'+k]=counts[i];v['pct_'+k]=pct[i].toFixed(1)});
+  const p=new URLSearchParams();
+  Object.keys(v).forEach(k=>{const code=FORMBRIDGE.fields[k];if(code)p.set(code,v[k])});
+  return {url:FORMBRIDGE.url+(FORMBRIDGE.url.includes('?')?'&':'?')+p.toString(),cut:cut,answered:answered};
+}
+if(!FORMBRIDGE.url)document.getElementById('connBanner').style.display='block';
+document.getElementById('formBtn').addEventListener('click',()=>{
+  const msg=document.getElementById('formMsg');
+  const r=calculate();
+  if(!FORMBRIDGE.url){msg.textContent='【確認用】提出フォームにはまだつながっていません。つながると、ここを押した時に提出フォームが別のタブで開き、結果が入力された状態になります。';return}
+  const b=buildSubmit();
+  if(b.answered===0){msg.textContent='回答が1つもありません。入力してから押してください。';return}
+  if(b.url.length>7000){msg.textContent='入力が長すぎて、提出フォームに渡せませんでした。メモを短くして、もう一度押してください。';return}
+  window.open(b.url,'_blank','noopener');
+  msg.textContent='提出フォームを別のタブで開きました。内容を確かめて、送信してください。'+(b.cut?'（メモは先頭'+MEMO_MAX+'字までを渡しました。全文はPDFかCSVで残せます）':'');
+});
+updateProgress();drawRadar([0,0,0,0,0]);
+})();
+</script>
+</body></html>
