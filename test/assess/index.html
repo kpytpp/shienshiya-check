@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>養護者理解のためのアセスメント補助ツール（熟年相談室版）</title>
+<title>【テスト版】養護者理解のためのアセスメント補助ツール（熟年相談室版）</title>
 <style>
 :root{--navy:#17324d;--blue:#2673b8;--pale:#edf5fb;--line:#d8e1e8;--text:#1f2933;--muted:#5d6b78;--warn:#fff7df;--white:#fff;--danger:#b42318}
 *{box-sizing:border-box}body{margin:0;background:#f4f7f9;color:var(--text);font-family:"Yu Gothic UI","Yu Gothic",Meiryo,sans-serif;line-height:1.65}
@@ -20,12 +20,12 @@ button{border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:point
 </style>
 </head>
 <body>
-<header><div class="inner"><h1>養護者理解のためのアセスメント補助ツール</h1><div class="version">熟年相談室版（係内を含む）／ 試作版 Ver.0.3</div></div></header>
+<header><div class="inner"><h1>養護者理解のためのアセスメント補助ツール</h1><div class="version">【テスト版】熟年相談室版（係内を含む）／ 試作版 Ver.0.3</div></div></header>
 <main>
 <div class="notice" style="border-left-color:#17324d;background:#edf5fb"><strong>【試用できる人】</strong>次の<strong>両方</strong>に当てはまる人だけが、試用できます。<br>① このツールの<strong>研修を受けた人</strong><br>② <strong>熟年相談室（係内を含む）の職員</strong><br>どちらかに当てはまらない場合は、使わないでください（画面を見るだけにとどめてください）。</div>
 <div class="notice"><strong>必ずお読みください。</strong> 本ツールは養護者を診断・分類・ラベリングするものではありません。養護者の発言や状況から、虐待行為に至る背景を理解し、支援を検討するための補助ツールです。該当しない事項は選択せず、把握できていない事項は未回答のままで構いません。結果の大小だけで判断せず、複数の情報をもとに総合的に検討してください。</div>
 <div class="notice" style="border-left-color:#b42318"><strong>入力のお願い（熟年相談室限定）。</strong>この版は、熟年相談室（係内を含む）の職員向けです。ご本人・家族・事業所を特定できる情報（氏名、住所、生年月日、電話番号、事件番号など）は、メモ欄を含め、どこにも入力しないでください。「提出フォームを開く」を押すと、結果とメモが入力された状態で提出フォームが別のタブで開きます。内容を確かめてから、送信してください。</div>
-<div class="notice no-print" id="connBanner" style="display:none;border-left-color:#2673b8"><strong>【確認用】</strong>提出フォームにはまだつながっていません。画面の見え方と動きの確認用です。</div>
+<div class="notice no-print" id="connBanner" style="display:none;border-left-color:#2673b8"><strong>【テスト版】</strong>動作確認用です。提出フォームにはつながっていません。内容を変えるときは、先にここで試します。</div>
 <div class="toolbar no-print"><button id="calcBtn">結果を表示</button><button id="clearBtn" class="danger">入力を消去</button><div class="progress" aria-label="入力進捗"><span id="progressBar"></span></div><div class="progress-text" id="progressText">回答 0 / 15</div></div>
 <div class="input-area" id="form"></div>
 <section class="result" id="result" aria-live="polite">
@@ -81,7 +81,7 @@ function calculate(){const counts=[0,0,0,0,0], evidence=[];selected().forEach(x=
 function renderScores(c,p){document.getElementById('scores').innerHTML=types.map((t,i)=>`<div class="score-row"><strong>${t}</strong><div class="bar"><span style="width:${p[i].toFixed(1)}%"></span></div><div class="score-value">${c[i]}/${max[i]}<br>${p[i].toFixed(0)}%</div></div>`).join('')}
 function drawRadar(p){const c=document.getElementById('radar'),ctx=c.getContext('2d'),cx=c.width/2,cy=c.height/2+5,R=185,N=5;ctx.clearRect(0,0,c.width,c.height);ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';for(let level=1;level<=5;level++){ctx.beginPath();for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N,r=R*level/5,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.strokeStyle='#ccd7df';ctx.stroke()}for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);ctx.strokeStyle='#d8e1e8';ctx.stroke();const lr=R+50;ctx.fillStyle='#263746';ctx.fillText(types[i],cx+Math.cos(a)*lr,cy+Math.sin(a)*lr)}ctx.beginPath();p.forEach((v,i)=>{const a=-Math.PI/2+i*2*Math.PI/N,r=R*v/100,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.closePath();ctx.fillStyle='rgba(38,115,184,.25)';ctx.fill();ctx.strokeStyle='#2673b8';ctx.lineWidth=3;ctx.stroke();p.forEach((v,i)=>{const a=-Math.PI/2+i*2*Math.PI/N,r=R*v/100,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fillStyle='#17649f';ctx.fill()})}
 function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-document.getElementById('calcBtn').addEventListener('click',calculate);document.getElementById('printBtn').addEventListener('click',()=>{calculate();document.title='養護者アセスメント結果_'+new Date().toISOString().slice(0,10);window.print();});window.addEventListener('afterprint',()=>{document.title='養護者理解のためのアセスメント補助ツール（熟年相談室版）';});document.getElementById('backBtn').addEventListener('click',()=>form.scrollIntoView({behavior:'smooth'}));document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('入力内容とメモをすべて消去しますか？')){form.querySelectorAll('input').forEach(x=>x.checked=false);document.getElementById('memo').value='';document.getElementById('result').classList.remove('show');updateProgress();window.scrollTo({top:0,behavior:'smooth'})}});
+document.getElementById('calcBtn').addEventListener('click',calculate);document.getElementById('printBtn').addEventListener('click',()=>{calculate();document.title='養護者アセスメント結果_'+new Date().toISOString().slice(0,10);window.print();});window.addEventListener('afterprint',()=>{document.title='【テスト版】養護者理解のためのアセスメント補助ツール（熟年相談室版）';});document.getElementById('backBtn').addEventListener('click',()=>form.scrollIntoView({behavior:'smooth'}));document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('入力内容とメモをすべて消去しますか？')){form.querySelectorAll('input').forEach(x=>x.checked=false);document.getElementById('memo').value='';document.getElementById('result').classList.remove('show');updateProgress();window.scrollTo({top:0,behavior:'smooth'})}});
 document.getElementById('csvBtn').addEventListener('click',()=>{const r=calculate(),rows=[['養護者アセスメント補助ツール 試作版'],['出力日時',new Date().toLocaleString('ja-JP')],[],['タイプ','該当数','分母','割合']];types.forEach((t,i)=>rows.push([t,r.counts[i],max[i],r.pct[i].toFixed(1)+'%']));rows.push([],['チェックした根拠項目']);r.evidence.forEach(e=>rows.push([e]));rows.push([],['支援検討メモ',document.getElementById('memo').value]);rows.push([],['注意','本結果は診断・タイプ確定を目的とせず、支援検討の参考傾向を示すものです。']);const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='養護者アセスメント結果_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)});
 
 // ===== 提出フォーム（フォームブリッジ→kintone）連携：熟年相談室版 =====
@@ -133,7 +133,7 @@ if(!FORMBRIDGE.url)document.getElementById('connBanner').style.display='block';
 document.getElementById('formBtn').addEventListener('click',()=>{
   const msg=document.getElementById('formMsg');
   const r=calculate();
-  if(!FORMBRIDGE.url){msg.textContent='【確認用】提出フォームにはまだつながっていません。つながると、ここを押した時に提出フォームが別のタブで開き、結果が入力された状態になります。';return}
+  if(!FORMBRIDGE.url){msg.textContent='【テスト版】ここを押すと、本番では提出フォームが別のタブで開き、結果が入力された状態になります。テスト版では開きません。';return}
   const b=buildSubmit();
   if(b.answered===0){msg.textContent='回答が1つもありません。入力してから押してください。';return}
   if(b.url.length>7000){msg.textContent='入力が長すぎて、提出フォームに渡せませんでした。メモを短くして、もう一度押してください。';return}
