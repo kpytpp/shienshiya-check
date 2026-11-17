@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>心理機能タイプ簡易チェック</title>
+<title>支援者タイプチェック</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -188,7 +188,7 @@
 </head>
 <body>
 <div class="container">
-  <h1 id="pageTitle">心理機能タイプ簡易チェック（普段の自分版）</h1>
+  <h1 id="pageTitle">支援者タイプチェック（普段の自分版）</h1>
   <p class="subtitle" id="pageSubtitle">
     どちらも「間違いではない」2つの考え方から、自分に近い方を選んでいく形式です（全20問・5分程度）。<br>
     ※C.G.ユングの心理機能論（思考・感情・感覚・直観、外向・内向）を参考にした独自の簡易チェックであり、臨床的な診断ではありません。
@@ -201,10 +201,6 @@
     </div>
     <div class="restore-notice" id="restoreNotice" style="display:none;">
       前回の結果がこの端末に保存されています。<button class="btn-secondary" style="padding:6px 14px;font-size:0.85em;margin-left:8px;" onclick="restoreSaved()">前回の結果を表示する</button>
-    </div>
-    <div class="file-load-box">
-      💾 保存した結果ファイル（.json）をお持ちの場合は、こちらから読み込んで結果画面を再表示できます。<br>
-      <input type="file" accept=".json,application/json" onchange="loadResultFromFile(event)">
     </div>
 
     <div class="start-card">
@@ -240,7 +236,7 @@
       <div class="toc-list">
         <a href="#sec-type">あなたのタイプ</a>
         <a href="#sec-chart">心理機能の割合</a>
-        <a href="#sec-direction">エネルギーの方向</a>
+        <a href="#sec-direction">外向・内向</a>
         <a href="#sec-close" id="tocCloseLink" style="display:none;">近い値について</a>
         <a href="#sec-var">対応スタイルの可変性</a>
         <a href="#sec-alltypes">全タイプの説明</a>
@@ -263,7 +259,7 @@
     </div>
 
     <div class="attitude-box" id="sec-direction">
-      <div class="attitude-title">エネルギーの方向</div>
+      <div class="attitude-title">外向・内向（考えの整理の仕方）</div>
       <div class="attitude-bar-wrap">
         <div class="attitude-label">内向 (I)</div>
         <div class="attitude-bar-bg">
@@ -286,7 +282,7 @@
     <!-- ===== 全タイプの説明 ===== -->
     <div class="alltypes-box" id="sec-alltypes">
       <div class="alltypes-title">8つのタイプの説明</div>
-      <div class="alltypes-note">4つの心理機能（思考・感情・感覚・直観）× エネルギーの方向（外向・内向）の組み合わせです。あなたのタイプには色が付いています。タップすると説明が開きます。</div>
+      <div class="alltypes-note">4つの心理機能（思考・感情・感覚・直観）× 外向・内向（考えの整理の仕方）の組み合わせです。あなたのタイプには色が付いています。タップすると説明が開きます。</div>
       <div id="allTypesList"></div>
     </div>
 
@@ -318,11 +314,11 @@
       <details>
         <summary>外向（Extraversion）と内向（Introversion）＝「方向」</summary>
         <div class="glossary-content">
-          <p><b>外向：</b>人と関わったり、声に出して話したりすることでエネルギーが生まれる方向です。</p>
+          <p><b>外向：</b>考えを整理するとき、人と話したり、声に出したり、実際に動いたりしながらまとまっていく傾向です。</p>
           <div class="glossary-example">例：迷っていることがあるとき、誰かに話しながら考えると頭が整理される。</div>
-          <p><b>内向：</b>一人で考えたり、内側でじっくり処理したりすることでエネルギーが生まれる方向です。</p>
+          <p><b>内向：</b>まずひとりで静かに考え、内側でじっくり整理してから、話したり動いたりする傾向です。</p>
           <div class="glossary-example">例：迷っていることがあるとき、まず一人になって考えを整理してから、必要な人にだけ話す。</div>
-          <p class="glossary-note">※「社交的かどうか」ではなく、「エネルギーがどちらの方向に自然と向かうか」を表します。内向的でも人と話すのが得意な人もいます。</p>
+          <p class="glossary-note">※「社交的かどうか」ではなく、「考えを整理するときの進め方」の違いを表します。内向的でも人と話すのが得意な人もいます。</p>
         </div>
       </details>
 
@@ -358,13 +354,14 @@
       <div class="save-title">結果の保存・提出</div>
       <div class="save-desc" id="saveDesc"></div>
 
+      <div style="font-weight:700;color:#1f7a4d;margin:10px 0 6px;">ステップ① まず、結果を提出してください</div>
       <div class="save-actions-main">
-        <button class="btn-save btn-save-main" id="formBtn" onclick="openForm()">提出フォームを開く<br><span class="btn-save-sub">（別タブ・結果は入力済み）</span></button>
+        <button class="btn-save btn-save-main" id="formBtn" onclick="openForm()">① 提出フォームを開く<br><span class="btn-save-sub">（別タブ・結果は入力済み）</span></button>
       </div>
 
+      <div style="font-weight:700;color:#556;margin:18px 0 6px;">ステップ② 提出が済んでから（お手元に残したい方のみ）</div>
       <div class="save-actions">
-        <button class="btn-copy" onclick="printAsPDF()">解説を全部開いてPDF保存</button>
-        <button class="btn-copy" onclick="downloadResultFile()">結果をファイルに保存（.json）</button>
+        <button class="btn-copy" onclick="printAsPDF()">② 解説を全部開いてPDF保存</button>
         <button class="btn-copy" onclick="copyResult()">結果をテキストでコピー</button>
       </div>
 
@@ -381,7 +378,7 @@
     ※「思考／感情」「感覚／直観」は対になっているため、個人の中でどちらに寄るかは分かりますが、人と人の間で「思考の量」を比べる用途には向きません。<br>
     ※「対応スタイルの可変性」はユングの4機能とは別の観点（切り替えやすさ・判断軸の揺れ）のため、レーダーチャートには含めず独立して表示しています。<br>
     ※養護者タイプの分類は、高齢者虐待対応の実践資料を参考に本アプリ用に簡略化した参考モデルです。<br>
-    ※本チェックは自己理解・相互理解を目的としたものであり、人事評価・担当の割り当て・適性の判定に用いるものではありません。
+    ※本チェックは自己理解・相互理解を目的としたものであり、人事評価・適性の判定に用いるものではありません。担当を決めるときも、この結果だけで決めることはありません。
   </div>
 </div>
 
@@ -695,7 +692,7 @@ function renderResult(rates, raw, maxes, extraversion, introversion, variability
     + `<div class="hero-desc">${jung8.desc}</div>`
     + `<div class="hero-badges">`
     +   `<span class="hero-badge">寄りやすい機能<br><b>${topFunc.name}（${rates[topFunc.key]}%）</b></span>`
-    +   `<span class="hero-badge">エネルギーの方向<br><b>${directionName}（${directionKey === 'e' ? extraversion : introversion}%）</b></span>`
+    +   `<span class="hero-badge">考えの整理の仕方<br><b>${directionName}（${directionKey === 'e' ? extraversion : introversion}%）</b></span>`
     +   `<span class="hero-badge">意識すると幅が広がる視点<br><b>${growthFunc.name}（${rates[growthFunc.key]}%）</b></span>`
     + `</div>`;
 
@@ -717,7 +714,7 @@ function renderResult(rates, raw, maxes, extraversion, introversion, variability
   document.getElementById("varComment").innerHTML = `スコア：<b>${variability}%</b><br>` + variabilityComment(variability);
 
   document.getElementById("caregiverCaveat").textContent =
-    "※以下の養護者タイプは、高齢者虐待対応の実践資料を参考に本アプリ用に簡略化した参考モデルです。担当の割り当てを示すものではなく、対応時に意識しておくとよい点を整理したものです。実際の判断は事例ごとのアセスメントに基づいて行ってください。";
+    "※以下の養護者タイプは、高齢者虐待対応の実践資料を参考に本アプリ用に簡略化した参考モデルです。担当を決める根拠そのものではなく、対応時に意識しておくとよい点を整理したものです。実際の判断は事例ごとのアセスメントに基づいて行ってください。";
 
   const compatData = COMPAT[topFunc.key];
   const compatList = document.getElementById("compatList");
@@ -749,7 +746,7 @@ function renderResult(rates, raw, maxes, extraversion, introversion, variability
     ? `一方、<b>${cautions.map(s => s.name).join("・")}</b>の養護者に対しては、線引きや別の視点からの補完を意識しておきたいところです。<br>`
     : `特に注意が必要な組み合わせは出ていませんが、どの傾向であっても一人で抱え込まないことが前提です。<br>`;
   html += `<br>自分と違う傾向を持つ同僚（例：${growthFunc.name}に寄りやすい人）と見立てを持ち寄ると、対応の幅を補い合えます。`;
-  html += `<br><br>※簡易的なセルフチェックであり、一つのタイプに断定するものではありません。担当ケースの割り当てを決めるためのものでもありません。`;
+  html += `<br><br>※簡易的なセルフチェックであり、一つのタイプに断定するものではありません。担当ケースを、この結果だけで決めるためのものでもありません。`;
   document.getElementById("summaryBox").innerHTML = html;
 
   drawRadarChart(TYPES.map(t => rates[t.key]));
@@ -833,19 +830,13 @@ function renderSaveBox() {
   const btn = document.getElementById("formBtn");
   const storeNote = storageAvailable()
     ? "結果はこの端末にも自動保存されるため、画面を閉じても次に開いたときに再表示できます。"
-    : "<b>※この開き方では結果の一時保存が使えません。</b>画面を閉じる前に、ファイル保存かテキストコピーを済ませてください。";
-  const baseDesc = "「解説を全部開いてPDF保存」を押すと、下の用語解説がすべて開いた状態でこの結果画面全体（解説含む）のPDFファイルがその場で作られます。パソコンでは自動的にダウンロードされ、iPhoneでは新しいタブでPDFが開くので、共有ボタンから「ファイルに保存」を選んでください。<br>"
-      + "「結果をファイルに保存」を押すと <b>.jsonファイル</b> がダウンロードされます。"
-      + "そのファイルは最初の画面の「保存した結果ファイルを読み込む」から、いつでも同じ結果画面として再表示できます（他の端末でも可）。<br>" + storeNote;
-  if (FORMBRIDGE.url) {
-    desc.innerHTML = "まずは下の<b>「提出フォームを開く」</b>ボタンから、結果を提出してください（結果はあらかじめ入力された状態で<b>別タブ</b>に開きます。この画面は閉じずにそのまま残りますので、送信後もここに戻って確認・保存できます）。<br><br>"
-      + baseDesc;
-    btn.style.display = "";
-  } else {
-    desc.innerHTML = baseDesc
-      + "<br><b>提出フォームは未設定です。</b>フォーム作成後、HTMLファイル内の <code>FORMBRIDGE.url</code> にURLを設定すると、結果を自動入力した状態で別タブに開けるようになります。";
-    btn.style.display = "none";
-  }
+    : "<b>※この開き方では結果の一時保存が使えません。</b>画面を閉じる前に、PDF保存かテキストコピーを済ませてください。";
+  const baseDesc = "<b>ステップ①</b>：下の「提出フォームを開く」を押して、結果を提出してください（結果はあらかじめ入力された状態で<b>別タブ</b>に開きます。送信したら、そのタブを閉じるか、ブラウザの「戻る」でこの画面に戻れます）。<br>"
+      + "<b>ステップ②</b>：提出が済んだら、お手元に残したい方は「PDF保存」を押してください。結果画面全体（解説を含む）のPDFが作られます。パソコンでは自動的にダウンロードされ、iPhoneでは新しいタブでPDFが開くので、共有ボタンから「ファイルに保存」を選んでください。<br>"
+      + "<b>PDFが開いたあと、この画面に戻るには</b>、ブラウザの「戻る」を押してください。<br>"
+      + storeNote;
+  desc.innerHTML = baseDesc;
+  btn.style.display = "";
 }
 
 function openForm() {
@@ -874,44 +865,6 @@ let __downloadsCap = null;
     }
   } catch (e) { __downloadsCap = null; }
 })();
-
-async function downloadResultFile() {
-  if (!lastResult) return;
-  const stamp = (lastResult.date || "").replace(/[^0-9]/g, "") || "result";
-  const filename = `心理機能タイプチェック結果_${stamp}.json`;
-  const data = JSON.stringify(lastResult, null, 2);
-  const msg = document.getElementById("copyMsg");
-
-  if (__downloadsCap) {
-    try {
-      await __downloadsCap.save({ filename, data });
-      msg.textContent = "結果ファイルを保存しました。別の端末やブラウザで見るときは、最初の画面の「ファイルから読み込む」からこのファイルを開いてください。";
-    } catch (err) {
-      if (err && err.code === "declined") {
-        msg.textContent = "保存をキャンセルしました。";
-      } else {
-        msg.textContent = "ファイル保存に失敗しました。代わりに「結果をテキストでコピー」をお使いください。";
-      }
-    }
-    return;
-  }
-
-  // フォールバック：downloads capabilityが使えない環境（ローカルファイルとして開いた場合等）
-  try {
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    msg.textContent = "結果ファイルを保存しました。別の端末やブラウザで見るときは、最初の画面の「ファイルから読み込む」からこのファイルを開いてください。";
-  } catch (e) {
-    msg.textContent = "この環境ではファイル保存に対応していません。代わりに「結果をテキストでコピー」をお使いください。";
-  }
-}
 
 // iPhone（iOS Safari）はwindow.print()からの「PDFに保存」の導線が分かりにくく、
 // うまく保存できないという報告があったため、印刷ダイアログに頼らず
@@ -944,62 +897,42 @@ async function printAsPDF() {
     await new Promise(r => setTimeout(r, 100));
 
     const canvas = await html2canvas(resultView, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    while (heightLeft > 0) {
-      position -= pageHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+    // 全体を1枚の巨大な画像のまま全ページに貼るとファイルが数十MBになり、スマホで保存できなくなる。
+    // そのため、1ページ分ずつ切り出して、軽いJPEGで貼る（ファイルが数MBになる）。
+    const sliceHeightPx = Math.floor(canvas.width * pageHeight / pageWidth);
+    const pageCount = Math.max(1, Math.ceil(canvas.height / sliceHeightPx));
+    const slice = document.createElement('canvas');
+    slice.width = canvas.width;
+    slice.height = sliceHeightPx;
+    const sctx = slice.getContext('2d');
+    for (let i = 0; i < pageCount; i++) {
+      sctx.fillStyle = '#ffffff';
+      sctx.fillRect(0, 0, slice.width, slice.height);
+      const srcY = i * sliceHeightPx;
+      const h = Math.min(sliceHeightPx, canvas.height - srcY);
+      sctx.drawImage(canvas, 0, srcY, canvas.width, h, 0, 0, canvas.width, h);
+      if (i > 0) pdf.addPage();
+      pdf.addImage(slice.toDataURL('image/jpeg', 0.85), 'JPEG', 0, 0, pageWidth, pageHeight);
     }
 
     const stamp = (lastResult && lastResult.date ? lastResult.date.replace(/[^0-9]/g, "") : "result");
-    pdf.save(`心理機能タイプチェック結果_${stamp}.pdf`);
+    pdf.save(`支援者タイプチェック結果_${stamp}.pdf`);
     msg.textContent = 'PDFを作成しました。iPhoneの場合、新しいタブでPDFが開いたら共有ボタンから「ファイルに保存」を選んでください。';
   } catch (err) {
     console.warn("PDF生成に失敗、印刷ダイアログにフォールバックします", err);
-    msg.textContent = 'PDFの自動作成に失敗したため、印刷ダイアログを開きます。';
+    const why = (!window.html2canvas || !window.jspdf) ? 'PDF作成の部品を読み込めませんでした' : ((err && err.message) ? String(err.message).slice(0, 80) : '原因不明');
+    msg.textContent = 'PDFの自動作成に失敗したため、印刷ダイアログを開きます。（原因：' + why + '）';
     restore();
     setTimeout(() => { window.print(); }, 60);
     return;
   } finally {
     restore();
   }
-}
-
-function loadResultFromFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const r = JSON.parse(e.target.result);
-      if (!r || !r.rates || !r.raw || !r.maxes) throw new Error("invalid file");
-      lastResult = r;
-      document.getElementById("modeView").style.display = "none";
-      document.getElementById("quizView").style.display = "none";
-      document.getElementById("resultView").style.display = "block";
-      document.getElementById("resultModeLabel").textContent = (r.version || MODE_LABEL) + " の結果（ファイルから読み込み）";
-      renderResult(r.rates, r.raw, r.maxes, r.extraversion, r.introversion, r.variability, "読み込んだ結果：" + (r.date || ""));
-      saveToStorage(r);
-      renderSaveBox();
-    } catch (err) {
-      alert("ファイルの読み込みに失敗しました。本チェックで保存した結果ファイル(.json)を選んでください。");
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = "";
 }
 
 function restoreSaved() {
