@@ -24,7 +24,7 @@ button{border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:point
 <main>
 <div class="notice" style="border-left-color:#17324d;background:#edf5fb"><strong>【試用できる人】</strong>次の<strong>両方</strong>に当てはまる人だけが、試用できます。<br>① このツールの<strong>研修を受けた人</strong><br>② <strong>熟年相談室（係内を含む）の職員</strong><br>どちらかに当てはまらない場合は、使わないでください（画面を見るだけにとどめてください）。</div>
 <div class="notice"><strong>必ずお読みください。</strong> 本ツールは養護者を診断・分類・ラベリングするものではありません。養護者の発言や状況から、虐待行為に至る背景を理解し、支援を検討するための補助ツールです。該当しない事項は選択せず、把握できていない事項は未回答のままで構いません。結果の大小だけで判断せず、複数の情報をもとに総合的に検討してください。</div>
-<div class="notice" style="border-left-color:#b42318"><strong>入力のお願い（熟年相談室限定）。</strong>この版は、熟年相談室（係内を含む）の職員向けです。ご本人・家族・事業所を特定できる情報（氏名、住所、生年月日、電話番号、事件番号など）は、メモ欄を含め、どこにも入力しないでください。「提出フォームを開く」を押すと、結果とメモが入力された状態で提出フォームが別のタブで開きます。内容を確かめてから、送信してください。</div>
+<div class="notice" style="border-left-color:#b42318"><strong>入力のお願い（熟年相談室限定）。</strong>この版は、熟年相談室（係内を含む）の職員向けです。ご本人・家族・事業所を特定できる情報（氏名、住所、生年月日、電話番号、事件番号など）は、メモ欄を含め、どこにも入力しないでください。「提出フォームを開く」を押すと、各タイプの割合（%）とチェックした根拠項目が入力された状態で提出フォームが別のタブで開きます（メモは渡りません）。内容を確かめてから、送信してください。</div>
 <div class="notice no-print" id="connBanner" style="display:none;border-left-color:#2673b8"><strong>【確認用】</strong>提出フォームにはまだつながっていません。画面の見え方と動きの確認用です。</div>
 <div class="toolbar no-print"><button id="calcBtn">結果を表示</button><button id="clearBtn" class="danger">入力を消去</button><div class="progress" aria-label="入力進捗"><span id="progressBar"></span></div><div class="progress-text" id="progressText">回答 0 / 15</div></div>
 <div class="input-area" id="form"></div>
@@ -91,15 +91,13 @@ document.getElementById('csvBtn').addEventListener('click',()=>{const r=calculat
 const FORMBRIDGE={
   url:"",
   fields:{
-    datetime:"ass_datetime",      // 入力日時
-    version:"ass_version",        // 設問・ツールの版（設問を直した時に前後を分けるため）
-    answered:"ass_answered",      // 回答した設問数（0〜15）
-    raw:"ass_raw",                // 生回答（設問ごとの選択肢番号。形式は項目対応表を参照）
-    gap:"ass_gap",                // 「事実と養護者の理解が異なる」にチェックした設問番号（例 1,3）
-    top:"ass_top",                // 相対的に割合が高いタイプ（例 権力と支配、承認欲求）
-    cnt_power:"ass_cnt_power", cnt_stress:"ass_cnt_stress", cnt_mental:"ass_cnt_mental", cnt_denial:"ass_cnt_denial", cnt_approval:"ass_cnt_approval",
+    // 【2026-11-18 グラマス指定】フォームに渡すのは「チェックした根拠項目（複数行）」と「各タイプの割合（%）」だけ。
+    // 空文字("")の項目は渡さない（また渡したくなったら、フォーム側のフィールドコードをここに入れる）。
+    evidence:"ass_evidence",      // チェックした根拠項目（1行ずつ「設問番号. 選んだ内容」）
     pct_power:"ass_pct_power", pct_stress:"ass_pct_stress", pct_mental:"ass_pct_mental", pct_denial:"ass_pct_denial", pct_approval:"ass_pct_approval",
-    memo:"ass_memo"               // 支援検討メモ（先頭300字まで）
+    datetime:"", version:"", answered:"", raw:"", gap:"", top:"",
+    cnt_power:"", cnt_stress:"", cnt_mental:"", cnt_denial:"", cnt_approval:"",
+    memo:""                       // 支援検討メモは渡さない
   }
 };
 const TOOL_VERSION="熟相版 v0.3";
@@ -107,8 +105,8 @@ const MEMO_MAX=300;
 const TKEYS=["power","stress","mental","denial","approval"];
 function nowStr(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
 function buildSubmit(){
-  const counts=[0,0,0,0,0];
-  selected().forEach(x=>{(x.dataset.types||'').split(',').filter(Boolean).forEach(t=>counts[+t]++)});
+  const counts=[0,0,0,0,0],evid=[];
+  selected().forEach(x=>{(x.dataset.types||'').split(',').filter(Boolean).forEach(t=>counts[+t]++);evid.push(`${x.closest('.question').dataset.q}. ${x.value}`)});
   const pct=counts.map((v,i)=>Math.min(100,v/max[i]*100));
   const segs=[];let answered=0;
   for(let n=1;n<=15;n++){
@@ -121,9 +119,9 @@ function buildSubmit(){
   const high=Math.max(...pct);
   const top=high>0?types.filter((_,i)=>Math.abs(pct[i]-high)<0.01).join('、'):'';
   let memo=(document.getElementById('memo').value||'').trim();
-  const cut=memo.length>MEMO_MAX;
+  const cut=!!FORMBRIDGE.fields.memo&&memo.length>MEMO_MAX;
   if(cut)memo=memo.slice(0,MEMO_MAX);
-  const v={datetime:nowStr(),version:TOOL_VERSION,answered:answered,raw:segs.join(','),gap:gaps.join(','),top:top,memo:memo};
+  const v={datetime:nowStr(),version:TOOL_VERSION,answered:answered,raw:segs.join(','),gap:gaps.join(','),top:top,memo:memo,evidence:evid.join(String.fromCharCode(10))};
   TKEYS.forEach((k,i)=>{v['cnt_'+k]=counts[i];v['pct_'+k]=pct[i].toFixed(1)});
   const p=new URLSearchParams();
   Object.keys(v).forEach(k=>{const code=FORMBRIDGE.fields[k];if(code)p.set(code,v[k])});
@@ -136,7 +134,7 @@ document.getElementById('formBtn').addEventListener('click',()=>{
   if(!FORMBRIDGE.url){msg.textContent='【確認用】提出フォームにはまだつながっていません。つながると、ここを押した時に提出フォームが別のタブで開き、結果が入力された状態になります。';return}
   const b=buildSubmit();
   if(b.answered===0){msg.textContent='回答が1つもありません。入力してから押してください。';return}
-  if(b.url.length>7000){msg.textContent='入力が長すぎて、提出フォームに渡せませんでした。メモを短くして、もう一度押してください。';return}
+  if(b.url.length>7000){msg.textContent='チェックした項目が多く、提出フォームに渡せませんでした。結果はPDFかCSVで残してください。';return}
   window.open(b.url,'_blank','noopener');
   msg.textContent='提出フォームを別のタブで開きました。内容を確かめて、送信してください。'+(b.cut?'（メモは先頭'+MEMO_MAX+'字までを渡しました。全文はPDFかCSVで残せます）':'');
 });
